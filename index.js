@@ -8,6 +8,8 @@ const request = require('request');
 
 const app = express();
 const port = 3000;
+app.use(express.static('MOJO'));
+
 
 const client_id = process.env.SPOTIFY_CLIENT_ID;
 const client_secret = process.env.SPOTIFY_CLIENT_SECRET;
