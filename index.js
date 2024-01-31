@@ -8,7 +8,9 @@ const request = require('request');
 
 const app = express();
 const port = 3000;
-//app.use(express.static('MOJO'));
+const path = require('path');
+app.use(express.static(path.join(__dirname, 'StaticFiles')));
+
 
 
 const client_id = process.env.SPOTIFY_CLIENT_ID;
