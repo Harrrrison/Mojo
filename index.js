@@ -8,7 +8,7 @@ const request = require('request');
 
 const app = express();
 const port = 3000;
-app.use(express.static('MOJO'));
+//app.use(express.static('MOJO'));
 
 
 const client_id = process.env.SPOTIFY_CLIENT_ID;
@@ -17,6 +17,8 @@ const redirect_uri = process.env.REDIRECT_URI;
 
 // Redirect to Spotify's authentication page
 app.get('/login', function(req, res) {
+    console.log('working');
+    res.send('working');
     var scopes = 'user-read-private user-read-email';
     res.redirect('https://accounts.spotify.com/authorize' +
         '?response_type=code' +
@@ -25,7 +27,6 @@ app.get('/login', function(req, res) {
         '&redirect_uri=' + encodeURIComponent(redirect_uri));
 });
 
-// Callback service parsing the authorization token and asking for the access token
 // Callback service parsing the authorization token and asking for the access token
 app.get('/callback', function(req, res) {
     var code = req.query.code || null;
@@ -43,7 +44,7 @@ app.get('/callback', function(req, res) {
         json: true
     };
 
-    request.post(authOptions, function(error, response, body) {
+   request.post(authOptions, function(error, response, body) {
         if (!error && response.statusCode === 200) {
             var access_token = body.access_token;
             var uri = 'http://localhost:3000/';
