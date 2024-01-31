@@ -24,6 +24,7 @@ app.get('/login', function(req, res) {
 });
 
 // Callback service parsing the authorization token and asking for the access token
+// Callback service parsing the authorization token and asking for the access token
 app.get('/callback', function(req, res) {
     var code = req.query.code || null;
 
@@ -48,6 +49,7 @@ app.get('/callback', function(req, res) {
         }
     });
 });
+
 
 app.listen(port, () => {
     console.log(`Listening on port ${port}`);
