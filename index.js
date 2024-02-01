@@ -20,7 +20,7 @@ const redirect_uri = process.env.REDIRECT_URI;
 // Redirect to Spotify's authentication page
 app.get('/login', function(req, res) {
     console.log('working');
-    res.send('working');
+    console.log(process.env.SPOTIFY_CLIENT_ID);
     var scopes = 'user-read-private user-read-email';
     res.redirect('https://accounts.spotify.com/authorize' +
         '?response_type=code' +
