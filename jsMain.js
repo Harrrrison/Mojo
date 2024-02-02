@@ -6,7 +6,7 @@ const accessToken = urlParams.get('access_token');
 
 if (accessToken) {
     // Use the access token to make API requests
-    // Example: Fetch user profile
+    // accsess token seems to be working but we need to figure out how to get the user data
     fetch('https://api.spotify.com/v1/me', {
         headers: { 'Authorization': 'Bearer ' + accessToken }
     })
