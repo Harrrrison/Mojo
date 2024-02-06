@@ -14,5 +14,5 @@ if (accessToken) {
         .then(data => {
             document.getElementById('data').innerHTML = JSON.stringify(data, null, 2);
         })
-        .catch(error => console.error(error));
+        .catch(error => console.error(error, JSON.stringify(data, null, 2)));
 }
