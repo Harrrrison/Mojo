@@ -1,0 +1,21 @@
+{
+  "name": "mojo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "AuthCodeFlow.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.cs.man.ac.uk/v76269hr/MOJO.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.1",
+    "express": "^4.18.2",
+    "request": "^2.88.2"
+  }
+}
