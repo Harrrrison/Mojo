@@ -1,4 +1,4 @@
-// following the spotify API tutoral so this will not be close to the final implemetation
+// following the spotify API tutorial so this will not be close to the final implemetation
 // https://developer.spotify.com/documentation/general/guides/authorization-guide/
 
 
