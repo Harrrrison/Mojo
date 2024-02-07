@@ -22,5 +22,6 @@ if (accessToken) {
         .then(data => {
             document.getElementById('TopTracks').innerHTML = JSON.stringify(data, null, 2);
         })
-        .catch(error => console.error(error));
+        .catch(error => console.error(error)); // unexpeded end of json error here!!!!
+
 }
