@@ -1,4 +1,4 @@
-// fornt end code for the spotify API (index.js)
+// Front end code for the spotify API (index.js)
 // Parse the URL to get the access token if it's there
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
@@ -35,7 +35,7 @@ if (accessToken) {
 
         .catch(error => console.error(error));
 
-    fetch('https://api.spotify.com/v1/me/top/artists?limit=10', { // ERROR incomplete JSON IDK why
+    fetch('https://api.spotify.com/v1/me/top/artists?limit=10&time_range=short_term', { // ERROR incomplete JSON IDK why
         headers: { 'Authorization': 'Bearer ' + accessToken }
     })
         .then(response => response.json())
