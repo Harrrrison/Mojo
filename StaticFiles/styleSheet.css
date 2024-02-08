@@ -3,27 +3,41 @@ body, html {
     justify-content: center;
 }
 
+
+.background {
+    background-color: #1db954;
+
+}
 .flex-container {
     display: flex;
     justify-content: center;
     flex-direction: column;
     align-items: center;
+    width: 100%;
+    position: relative;
+    right: 16em;
+    top: 17em;
 }
 
 .item-title {
-    font-size: 70px;
+    font-size: 7em;
     font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 .item-tagline {
-    font-size: medium;
+    font-size: 2em;
     font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
+    padding-top: 2.5em;
+    padding-bottom: 1em;
+
 }
 .item-container {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    align-items: left;
+    justify-content: left;
     flex-direction: column;
     flex-grow: 4;
     gap: 10px;
@@ -39,7 +53,7 @@ button {
     top: 50%;
     left: 50%;
     padding: 20px 50px;
-    font-size: 15px;
+    font-size: 3em;
     font-weight: bold;
     cursor: pointer;
 }
