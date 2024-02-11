@@ -36,9 +36,8 @@ body, html {
 .item-container {
     display: flex;
     flex-direction: column;
-    align-items: left;
+   /* align-items: left;*/
     justify-content: left;
-    flex-direction: column;
     flex-grow: 4;
     gap: 10px;
 
