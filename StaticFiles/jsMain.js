@@ -1,5 +1,6 @@
 // Front end code for the spotify API (index.js)
 // Parse the URL to get the access token if it's there
+// https://developer.spotify.com/documentation/web-api
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const accessToken = urlParams.get('access_token');
