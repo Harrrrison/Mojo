@@ -16,6 +16,7 @@
   "dependencies": {
     "dotenv": "^16.4.1",
     "express": "^4.18.2",
+    "interactjs": "^1.10.26",
     "request": "^2.88.2"
   }
 }

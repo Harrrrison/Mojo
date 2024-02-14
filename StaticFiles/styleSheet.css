@@ -1,3 +1,7 @@
+/*Need to place the changing phone css, adjusting the viewport (use js to check the window size then select the sheet
+class
+*/
+
 body, html {
     display: flex;
     justify-content: center;
@@ -55,4 +59,39 @@ button {
     font-size: 3em;
     font-weight: bold;
     cursor: pointer;
+}
+
+
+/* Movable Div*/
+/*
+#TopArtistsDraggableBox {
+    position: absolute; /* THis is dead important do not remove
+    width: 100px;
+    height: 100px;
+    background-color: #1db954;
+    border: 1px solid #000;
+    cursor: move;
+    z-index: 9;
+}
+
+#TopArtistsDraggableBoxHeader {
+    font-size: 3em;
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
+    padding-top: 2.5em;
+    padding-bottom: 1em;
+}*/
+
+.draggable{
+    position: absolute;
+    width: 20%;
+    min-height: 6.5em;
+    background-color: #1db954;
+    border: 1px solid #000;
+    cursor: move;
+    z-index: 9;
+    touch-action: none;
+    user-select:none;
+    margin: 0;
+    padding: 5%;
 }
