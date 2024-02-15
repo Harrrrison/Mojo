@@ -39,7 +39,7 @@ if (accessToken) {
         })
 
         .catch(error => console.error(error));
-
+// this block can be reused for all other stats, look at the link above for the params needed in the url
     fetch('https://api.spotify.com/v1/me/top/artists?limit=10&time_range=short_term', {
         headers: { 'Authorization': 'Bearer ' + accessToken }
     })
@@ -112,24 +112,27 @@ function closeDragElement() {
 
 //interactjs.io
 
-// es6 import
-import interact from 'interactjs'
+//import interact from 'interactjsj';
 
-const position = { x: 500, y: 800}
+
+const position = { x: 0, y: 0 };
 
 interact('.draggable').draggable({
-
-    listeners:{
-        // debugger
-        start(event){
+    listeners: {
+        start(event) {
             console.log('drag started', event);
+            // Ensure the starting position is correct or reset if needed
         },
-
-        move(event){
+        move(event) {
+            // Calculate new position
             position.x += event.dx;
             position.y += event.dy;
 
+            // Apply the translation
             event.target.style.transform = `translate(${position.x}px, ${position.y}px)`;
+
+            // Optional: Log the new position to debug
+            console.log(`Moved to: ${position.x}, ${position.y}`);
         }
     }
-})
+});

@@ -91,7 +91,7 @@ button {
     cursor: move;
     z-index: 9;
     touch-action: none;
-    user-select:none;
+    user-select: none;
     margin: 0;
     padding: 5%;
 }
