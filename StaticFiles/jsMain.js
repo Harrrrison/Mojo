@@ -117,7 +117,7 @@ function closeDragElement() {
 
 const position = { x: 0, y: 0 };
 
-interact('.draggable').draggable({
+interact('.resize-drag').draggable({
     listeners: {
         start(event) {
             console.log('drag started', event);
@@ -135,40 +135,23 @@ interact('.draggable').draggable({
             console.log(`Moved to: ${position.x}, ${position.y}`);
         }
     }
-});
+})
+    .resizable({
+        edges: { top: true, left: true, bottom: true, right: true },
+        listeners: {
+            move: function (event) {
+                let { x, y } = event.target.dataset
 
-interact('.resizable').resizable({
+                x = (parseFloat(x) || 0) + event.deltaRect.left
+                y = (parseFloat(y) || 0) + event.deltaRect.top
 
-    edges: { left: true, right: true, bottom: true, top: true },
+                Object.assign(event.target.style, {
+                    width: `${event.rect.width}px`,
+                    height: `${event.rect.height}px`,
+                    transform: `translate(${x}px, ${y}px)`
+                })
 
-    listeners: {
-      move (event) {
-        var target = event.target
-        var x = (parseFloat(target.getAttribute('data-x')) || 0)
-        var y = (parseFloat(target.getAttribute('data-y')) || 0)
-
-        // update the element's style
-        target.style.width  = event.rect.width + 'px'
-        target.style.height = event.rect.height + 'px'
-
-        // translate when resizing from top or left edges
-        x += event.deltaRect.left
-        y += event.deltaRect.top
-
-        target.style.webkitTransform = target.style.transform =
-          'translate(' + x + 'px,' + y + 'px)'
-
-        target.setAttribute('data-x', x)
-        target.setAttribute('data-y', y)
-      }
-    },
-    modifiers: [
-      interact.modifiers.restrictEdges({
-        outer: 'parent'
-      }),
-      interact.modifiers.restrictSize({
-        min: { width: 100, height: 50 }
-      })
-    ],
-    inertia: true
-  });
+                Object.assign(event.target.dataset, { x, y })
+            }
+        }
+    })
