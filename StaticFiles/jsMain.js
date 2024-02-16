@@ -121,17 +121,14 @@ interact('.resize-drag').draggable({
     listeners: {
         start(event) {
             console.log('drag started', event);
-            // Ensure the starting position is correct or reset if needed
         },
         move(event) {
-            // Calculate new position
+
             position.x += event.dx;
             position.y += event.dy;
 
-            // Apply the translation
             event.target.style.transform = `translate(${position.x}px, ${position.y}px)`;
 
-            // Optional: Log the new position to debug
             console.log(`Moved to: ${position.x}, ${position.y}`);
         }
     }
@@ -139,6 +136,10 @@ interact('.resize-drag').draggable({
     .resizable({
         edges: { top: true, left: true, bottom: true, right: true },
         listeners: {
+            start(event) {
+                console.log('resize started', event);
+            },
+
             move: function (event) {
                 let { x, y } = event.target.dataset
 
@@ -146,12 +147,15 @@ interact('.resize-drag').draggable({
                 y = (parseFloat(y) || 0) + event.deltaRect.top
 
                 Object.assign(event.target.style, {
+                    // Need to work out a way to scale the text size aswell super doable
                     width: `${event.rect.width}px`,
                     height: `${event.rect.height}px`,
-                    transform: `translate(${x}px, ${y}px)`
+                    //transform: `translate(${x}px, ${y}px)` // This line is causing the issue
                 })
 
                 Object.assign(event.target.dataset, { x, y })
+
+                console.log(`Resized to: ${x}px, ${y}px`);
             }
         }
     })
