@@ -5,7 +5,7 @@ const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const accessToken = urlParams.get('access_token');
 
-function findNames(obj) {
+function findData(obj, keyToFind) {
     // This will be modified to find X but work needs to be done
     const names = [];
 
@@ -13,7 +13,7 @@ function findNames(obj) {
         // recursivley itterated though the json as some of the api responses are nested
         if (typeof element === 'object' && element !== null) {
             for (const key in element) {
-                if (key === 'name') {
+                if (key === keyToFind) {
                     // keyword name being looked for
                     names.push(element[key]);
                     // if found the name is pushed to the array, to be returned
@@ -35,7 +35,15 @@ if (accessToken) {
     })
         .then(response => response.json())
         .then(data => {
-            document.getElementById('data').innerHTML = JSON.stringify(data, null, 2);
+            try {
+                const username = findData(data, 'display_name'); // Extract names
+                // Convert names array to a string for display, e.g., as a list
+                const output = username.map(username => `<p>Hello ${username}</p>`).join('');
+                document.getElementById('data').innerHTML = `<ul>${output}</ul>`;
+            } catch (e) {
+                console.error("Parsing error:", e);
+                document.getElementById('data').innerHTML = "Error parsing JSON data.";
+            }
         })
 
         .catch(error => console.error(error));
@@ -46,7 +54,7 @@ if (accessToken) {
         .then(response => response.json())
         .then(data => {
             try {
-                const names = findNames(data); // Extract names
+                const names = findData(data, 'name'); // Extract names
                 // Convert names array to a string for display, e.g., as a list
                 const namesList = names.map(name => `<li>${name}</li>`).join('');
                 document.getElementById('topArtists').innerHTML = `<ul>${namesList}</ul>`;
