@@ -86,7 +86,7 @@ fetch('https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=10',
     .catch(error => console.error(error));
 
 
-// Popularity score of top songs
+// Popularity score of top songs turned into uniqueness score
 fetch('https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=10', {
     headers: { 'Authorization': 'Bearer ' + accessToken }
 })
@@ -95,8 +95,10 @@ fetch('https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=10',
         try {
             const names = findData(data, 'popularity'); // Extract names
             // Convert names array to a string for display, e.g., as a list
-            const namesList = names.map(name => `<li>${name}</li>`).join('');
-            document.getElementById('popularity').innerHTML = `<ul>${namesList}</ul>`;
+            const sum = names.reduce((a, b) => a + b, 0);
+            const popularityScore = Math.ceil(sum / names.length);
+            const uniquenessScore = 100 - popularityScore;
+            document.getElementById('popularity').innerHTML = `<p>Uniqueness: ${uniquenessScore}</p>`;
         } catch (e) {
             console.error("Parsing error:", e);
             document.getElementById('popularity').innerHTML = "Error parsing JSON data.";
