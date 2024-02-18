@@ -74,8 +74,8 @@ fetch('https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=10',
     .then(response => response.json())
     .then(data => {
         try {
-            const songNames = data.items.slice(0, 10).map(song => song.name); // Extract song names
-            // Convert names array to a string for display, e.g., as a list
+            const songNames = data.items.slice(0, 10).map(song => song.name); // Extract song names. Used this as there are multiple names held. May need to be changed if we vary the number of songs we display
+            // Convert songNames array to a string for display, e.g., as a list
             const namesList = songNames.map(name => `<li>${name}</li>`).join('');
             document.getElementById('topSongs').innerHTML = `<h3>Top Songs</h3><ol start="1">${namesList}</ol>`;
         } catch (e) {
@@ -93,10 +93,9 @@ fetch('https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=10',
     .then(response => response.json())
     .then(data => {
         try {
-            const names = findData(data, 'popularity'); // Extract names
-            // Convert names array to a string for display, e.g., as a list
-            const sum = names.reduce((a, b) => a + b, 0);
-            const uniquenessScore = 100 - Math.ceil(sum / names.length);
+            const popularity = findData(data, 'popularity'); // Extract popularity of each top song
+            const sum = popularity.reduce((a, b) => a + b, 0); // Sums up the popularity of each top song
+            const uniquenessScore = 100 - Math.ceil(sum / popularity.length); // Gives an average of popularity and then inverts it to get uniqueness score
             document.getElementById('popularity').innerHTML = `<p>Uniqueness: ${uniquenessScore}%</p>`;
         } catch (e) {
             console.error("Parsing error:", e);
