@@ -28,6 +28,26 @@ function findData(obj, keyToFind) {
     return names;
 }
 
+function fetchStats(accessToken, url, keyToFind, elementId) {
+    fetch(url, {
+        headers: { 'Authorization': 'Bearer ' + accessToken }
+    })
+        .then(response => response.json())
+        .then(data => {
+            try {
+                const username = findData(data, keyToFind); // Extract names
+                // Convert names array to a string for display, e.g., as a list
+                const output = username.map(username => `<p>${username}</p>`).join('');
+                document.getElementById(elementId).innerHTML = `<ul>${output}</ul>`;
+            } catch (e) {
+                console.error("Parsing error:", e);
+                document.getElementById(elementId).innerHTML = "Error parsing JSON data.";
+            }
+        })
+
+        .catch(error => console.error(error));
+}
+
 if (accessToken) {
     // Use the access token to make API requests
     fetch('https://api.spotify.com/v1/me', {
@@ -105,57 +125,10 @@ headers: { 'Authorization': 'Bearer ' + accessToken }
 })
 .catch(error => console.error(error));
 
-}
+    fetchStats(accessToken, 'https://api.spotify.com/v1/audio-analysis/11dFghVXANMlKmJXsNCbNl',
+        'start', 'testBox');// this is a test to see if the function works
+    // Should be working but its reguritating wayyyy too much so need to work out how to filter it
 
-// Draggable code
-// Below is the commented out method I wrote (doenst work very well if at all)
-//dragElement(document.getElementById("TopArtistsDraggableBox"));
-
-function dragElement(elmnt) {
-
-    var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-
-    if (document.getElementById(elmnt.id + "Header")) {
-        // if present, the header is where you move the DIV from:
-        document.getElementById(elmnt.id + "Header").onmousedown = dragMouseDown;
-    } else {
-        // otherwise, move the DIV from anywhere inside the DIV:
-        elmnt.onmousedown = dragMouseDown;
-    }
-
-
-
-function dragMouseDown(e) {
-    e = e || window.event;
-    e.preventDefault();
-
-    pos3 = e.clientX;
-    pos4 = e.clientY;
-
-    document.onmouseup = closeDragElement;
-    // call a function whenever the cursor moves:
-    document.onmousemove = elementDrag;
-}
-
-
-function elementDrag(e) {
-    e = e || window.event;
-    e.preventDefault();
-
-    pos1 = pos3 - e.clientX;
-    pos2 = pos4 - e.clientY;
-    pos3 = e.clientX;
-    pos4 = e.clientY;
-
-    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
-    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
-}
-
-function closeDragElement() {
-    document.onmouseup = null;
-    document.onmousemove = null;
-
-}
 }
 
 //interactjs.io
@@ -166,6 +139,13 @@ function closeDragElement() {
 const position = { x: 0, y: 0 };
 
 interact('.resize-drag').draggable({
+    modifiers: [
+        interact.modifiers.snap({
+            targets: [interact.snappers.grid({ x: 20, y: 20 })],
+            range: Infinity,
+            relativePoints: [{ x: 0, y: 0 }]
+        })
+    ],
     listeners: {
         start(event) {
             console.log('drag started', event);
