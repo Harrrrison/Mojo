@@ -48,6 +48,8 @@ if (accessToken) {
 
         .catch(error => console.error(error));
 // this block can be reused for all other stats, look at the link above for the params needed in the url
+
+// Top Artists
     fetch('https://api.spotify.com/v1/me/top/artists?limit=10&time_range=short_term', {
         headers: { 'Authorization': 'Bearer ' + accessToken }
     })
@@ -57,13 +59,31 @@ if (accessToken) {
                 const names = findData(data, 'name'); // Extract names
                 // Convert names array to a string for display, e.g., as a list
                 const namesList = names.map(name => `<li>${name}</li>`).join('');
-                document.getElementById('topArtists').innerHTML = `<ul>${namesList}</ul>`;
+                document.getElementById('topArtists').innerHTML = `<ol start="1">${namesList}</ol>`;
             } catch (e) {
                 console.error("Parsing error:", e);
                 document.getElementById('topArtists').innerHTML = "Error parsing JSON data.";
             }
         })
         .catch(error => console.error(error));
+
+// Popularity of top songs
+fetch('https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=10', {
+    headers: { 'Authorization': 'Bearer ' + accessToken }
+})
+    .then(response => response.json())
+    .then(data => {
+        try {
+            const names = findData(data, 'popularity'); // Extract names
+            // Convert names array to a string for display, e.g., as a list
+            const namesList = names.map(name => `<li>${name}</li>`).join('');
+            document.getElementById('popularity').innerHTML = `<ul>${namesList}</ul>`;
+        } catch (e) {
+            console.error("Parsing error:", e);
+            document.getElementById('popularity').innerHTML = "Error parsing JSON data.";
+        }
+    })
+    .catch(error => console.error(error));
 
 }
 
