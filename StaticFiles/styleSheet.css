@@ -19,8 +19,8 @@ body, html {
     align-items: center;
     width: 100%;
     position: relative;
-    right: 16em;
-    top: 17em;
+    right: auto;
+    top: auto;
 }
 
 .item-title {
@@ -101,4 +101,102 @@ button {
     border-radius: 0.75em;
     overflow: hidden;
     box-sizing: border-box;
+}
+
+/* Base styles for mobile */
+.item-title {
+    font-size: 2em; 
+}
+
+.item-tagline {
+    font-size: 1em; 
+}
+
+button {
+    padding: 8px 16px; 
+    font-size: 0.8em; 
+}
+
+/* Smartphones */
+@media (min-width:320px) {
+    .item-title {
+        font-size: 2.5em;
+    }
+    .item-tagline {
+        font-size: 1.2em;
+    }
+    button {
+        padding: 10px 20px;
+        font-size: 0.9em;
+    }
+}
+
+/* smaller tablets */
+@media (min-width:481px) {
+    .item-title {
+        font-size: 3em;
+    }
+    .item-tagline {
+        font-size: 1.4em;
+    }
+    button {
+        padding: 12px 24px;
+        font-size: 1em;
+    }
+}
+
+/* Portrait tablets, portrait iPad */
+@media (min-width:641px) {
+    .item-title {
+        font-size: 3.5em;
+    }
+    .item-tagline {
+        font-size: 1.6em;
+    }
+    button {
+        padding: 14px 28px;
+        font-size: 1.1em;
+    }
+}
+
+/* Tablet, landscape iPad, low-res laptops and desktops */
+@media (min-width:961px) {
+    .item-title {
+        font-size: 4em;
+    }
+    .item-tagline {
+        font-size: 1.8em;
+    }
+    button {
+        padding: 16px 32px;
+        font-size: 1.2em;
+    }
+}
+
+/* Big landscape tablets, laptops, and desktops */
+@media (min-width:1025px) {
+    .item-title {
+        font-size: 4.5em;
+    }
+    .item-tagline {
+        font-size: 2em;
+    }
+    button {
+        padding: 18px 36px;
+        font-size: 1.3em;
+    }
+}
+
+/* Hi-res laptops and desktops */
+@media (min-width:1281px) {
+    .item-title {
+        font-size: 5em;
+    }
+    .item-tagline {
+        font-size: 2.2em;
+    }
+    button {
+        padding: 20px 40px;
+        font-size: 1.4em;
+    }
 }
