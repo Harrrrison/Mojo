@@ -77,7 +77,7 @@ fetch('https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=10',
             const songNames = data.items.slice(0, 10).map(song => song.name); // Extract song names
             // Convert names array to a string for display, e.g., as a list
             const namesList = songNames.map(name => `<li>${name}</li>`).join('');
-            document.getElementById('topSongs').innerHTML = `<ul>${namesList}</ul>`;
+            document.getElementById('topSongs').innerHTML = `<h3>Top Songs</h3><ol start="1">${namesList}</ol>`;
         } catch (e) {
             console.error("Parsing error:", e);
             document.getElementById('topSongs').innerHTML = "Error parsing JSON data.";
