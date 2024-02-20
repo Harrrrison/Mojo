@@ -38,7 +38,8 @@ if (accessToken) {
             try {
                 const username = findData(data, 'display_name'); // Extract names
                 // Convert names array to a string for display, e.g., as a list
-                const output = username.map(username => `<p>Hello ${username}</p>`).join('');
+                // Added <span> tag to change color of the text
+                const output = username.map(username => `<p><span style="color: black;">Hello</span> ${username}.</p>`).join('');
                 document.getElementById('data').innerHTML = `<ul>${output}</ul>`;
             } catch (e) {
                 console.error("Parsing error:", e);
