@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mojo</title>
     <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
     <script src="jsMain.js"></script>
     <link rel="stylesheet" href="styleSheet.css">
@@ -11,19 +10,23 @@
 </head>
 <body class="background">
     <!-- Places the 'Hello Username' block in the top left corner -->
-    <div class="top-left"> 
-        <div class="username-container">
-            <!-- There is an issue with 'Hello Username' that makes it difficult to manipulate the padding and flex properties etc. -->
-            <!-- The JS code overrides the properties of the flex-container, not sure how to get around it but I implemented a very crude fix,
-            check jsMain-->
+    <div class="All">
 
-            <div id = "data" class="username-color"><span style="color: black;">Hello</span> Username</div>
+        <div class ="top-left">
+            <div class="username-container">
+                <!-- There is an issue with 'Hello Username' that makes it difficult to manipulate the padding and flex properties etc. -->
+                <!-- The JS code overrides the properties of the flex-container, not sure how to ge§t around it but I implemented a very crude fix,
+                check jsMain-->
+
+                <div id= "data" class="username-color"></div>
+            </div>
+
+            <!-- Places 'Mojo' logo in the top right -->
         </div>
-        
-    <!-- Places 'Mojo' logo in the top right -->
-    </div>
-    <div class="top-right">
-        <div class="mojo-logo">M O J O.</div>
+        <div class = "top-right">
+            <div class="mojo-logo">M O J O.</div>
+        </div>
+
     </div>
 
     <!-- Commented out this table for now -->
@@ -77,6 +80,8 @@
 <div id = "testBox"></div>
 
 </div>
+
+<!--We need to contain all the boxes in a div and use the .png-->
 
 </body>
 </html>

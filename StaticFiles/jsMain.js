@@ -28,17 +28,40 @@ function findData(obj, keyToFind) {
     return names;
 }
 
-function fetchStats(accessToken, url, keyToFind, elementId) {
+function fetchStats(accessToken, url, keyToFind, elementId, multiple = false) {
     fetch(url, {
         headers: { 'Authorization': 'Bearer ' + accessToken }
     })
         .then(response => response.json())
         .then(data => {
             try {
-                const username = findData(data, keyToFind); // Extract names
+                console.log(data);
+                const returnData = findData(data, keyToFind); // Extract names
                 // Convert names array to a string for display, e.g., as a list
-                const output = username.map(username => `<p>${username}</p>`).join('');
-                document.getElementById(elementId).innerHTML = `<ul>${output}</ul>`;
+                const output = returnData.map(returnData => `<p>${returnData}</p>`).join('');
+                if (multiple){
+                    /*const artistFollowers = findData(data, 'followers');
+                    const artistGenre = findData(data, 'genre');
+                    const artistPFP = findData(data, 'images')*/
+                    returnData.forEach((returnData, index) => {
+                        const element = document.getElementById(`${elementId}${index+1}`);
+                        if (element) {
+                            /*const artistContent = `
+                    <div class="artist-info">
+                        <p>Position: ${index + 1}</p>
+                        <p>Name: ${returnData}</p>
+                        <p>Followers: ${artistFollowers[index]}</p>
+                        <p>Genre: ${artistGenre[index]}</p>
+                        <img src="${artistPFP[index][0]}" alt="Artist profile picture">
+                    </div>`;*/
+                            element.innerHTML = `<p>${returnData}</p>`; // Display each username in its respective element
+                        }
+                    });
+                }else{
+
+                    document.getElementById(elementId).innerHTML = `<ul>${output}</ul>`;
+                }
+
             } catch (e) {
                 console.error("Parsing error:", e);
                 document.getElementById(elementId).innerHTML = "Error parsing JSON data.";
@@ -47,6 +70,8 @@ function fetchStats(accessToken, url, keyToFind, elementId) {
 
         .catch(error => console.error(error));
 }
+
+export {fetchStats};
 
 if (accessToken) {
     // Use the access token to make API requests
@@ -59,8 +84,8 @@ if (accessToken) {
                 const username = findData(data, 'display_name'); // Extract names
                 // Convert names array to a string for display, e.g., as a list
                 // Added <span> tag to change color of the text
-                const output = username.map(username => `<p><span style="color: black;">Hello</span> ${username}.</p>`).join('');
-                document.getElementById('data').innerHTML = `<ul>${output}</ul>`;
+                const output = username.map(username => `<p> <span style="color: black;">Hello</span> ${username}.</p>`).join('');
+                document.getElementById('data').innerHTML = `<p>${output}</p>`;
             } catch (e) {
                 console.error("Parsing error:", e);
                 document.getElementById('data').innerHTML = "Error parsing JSON data.";
@@ -127,7 +152,6 @@ headers: { 'Authorization': 'Bearer ' + accessToken }
 
     fetchStats(accessToken, 'https://api.spotify.com/v1/audio-analysis/11dFghVXANMlKmJXsNCbNl',
         'start', 'testBox');// this is a test to see if the function works
-    // Should be working but its reguritating wayyyy too much so need to work out how to filter it
 
 
 }
