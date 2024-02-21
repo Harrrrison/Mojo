@@ -23,8 +23,16 @@ async function example_query() {
     
     // clients need to be freed
     await client.release();
-
-    
 }
 
-example_query();
+async function new_example() {
+    const user = await db.find_or_insert_user("Matt", "ADASDASDA");
+    const page_visit = await db.insert_page_visit(user, 0.5);
+    const page_visits = await db.get_page_visits_info(user);
+    console.log(user);
+    console.log(page_visit);
+    console.log(page_visits);
+}
+
+//example_query();
+new_example();

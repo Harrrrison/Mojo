@@ -11,23 +11,21 @@ drop table if exists song_entries cascade;
 drop table if exists page_visits cascade;
 drop table if exists playlists cascade;
 drop table if exists users cascade;
-
+drop table if exists artists cascade;
 `;
 
+// NOTE: OLD (now not bothering with sized strings, just let the perf suffer
 // usernames on spotify can be upto 30 characters
 // since they could be unicode? (up to 4*more codepoints)
 // i just allocate 128 utf8 spaces
-//
-// TODO(matt): Just googled and theres a different datatype for unicode,
-// swap to that where necessary at some point
 //
 // i can't remember the size of the userid
 // but somewhere on the internet it said they vary from 20-128 hex characters
 // hence I just did 128
 const users_query = `drop table if exists users; create table users (
   id SERIAL PRIMARY KEY NOT NULL UNIQUE,
-  username VARCHAR(128) NOT NULL UNIQUE,
-  uid VARCHAR(128) NOT NULL UNIQUE
+  username VARCHAR NOT NULL UNIQUE,
+  uid VARCHAR NOT NULL UNIQUE
 );`;
 
 // assuming that score is going to map [0..1]
@@ -42,8 +40,8 @@ const page_visit_query = `
 create table page_visits (
   id SERIAL PRIMARY KEY NOT NULL UNIQUE,
   user_id SERIAL NOT NULL REFERENCES users ON DELETE CASCADE,
-  date DATE NOT NULL DEFAULT CURRENT_DATE,
-  score NUMERIC(1, 10) NOT NULL
+  date TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  score NUMERIC(10, 1) NOT NULL
 );`;
 
 // again not sure what to do for name
@@ -54,7 +52,17 @@ create table page_visits (
 const song_entry_query = `
 create table song_entries (
   id SERIAL PRIMARY KEY NOT NULL UNIQUE,
-  name VARCHAR(128) NOT NULL
+  name VARCHAR NOT NULL,
+  url VARCHAR NOT NULL,
+  artist_id SERIAL NOT NULL REFERENCES artists ON DELETE CASCADE
+);`;
+
+const artist_query = `
+create table artists (
+  id SERIAL PRIMARY KEY NOT NULL UNIQUE,
+  name VARCHAR NOT NULL,
+  uid VARCHAR NOT NULL,
+  url VARCHAR NOT NULL
 );`;
 
 // relational table for the link between songs and
@@ -74,7 +82,7 @@ const playlist_query = `
 create table playlists (
   id SERIAL PRIMARY KEY NOT NULL UNIQUE,
   user_id SERIAL NOT NULL REFERENCES users ON DELETE CASCADE,
-  url VARCHAR(128) NOT NULL
+  url VARCHAR NOT NULL
 );`;
 
 // another many-many relation table, this time to link songs to playlists
@@ -91,6 +99,7 @@ async function create_tables() {
     await db.query(drop_all_tables_query);
     await db.query(users_query);
     await db.query(page_visit_query);
+    await db.query(artist_query);
     await db.query(song_entry_query);
     await db.query(page_visit_song_entries_query);
     await db.query(playlist_query);
