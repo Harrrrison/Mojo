@@ -40,21 +40,21 @@ function fetchStats(accessToken, url, keyToFind, elementId, multiple = false) {
                 // Convert names array to a string for display, e.g., as a list
                 const output = returnData.map(returnData => `<p>${returnData}</p>`).join('');
                 if (multiple){
-                    /*const artistFollowers = findData(data, 'followers');
+                    const artistFollowers = findData(data, 'followers');
                     const artistGenre = findData(data, 'genre');
-                    const artistPFP = findData(data, 'images')*/
+                    const artistPFP = findData(data, 'images')
                     returnData.forEach((returnData, index) => {
                         const element = document.getElementById(`${elementId}${index+1}`);
                         if (element) {
-                            /*const artistContent = `
+                            element.innerHTML= `
                     <div class="artist-info">
-                        <p>Position: ${index + 1}</p>
+                        <p>${index + 1}.</p>
                         <p>Name: ${returnData}</p>
                         <p>Followers: ${artistFollowers[index]}</p>
                         <p>Genre: ${artistGenre[index]}</p>
                         <img src="${artistPFP[index][0]}" alt="Artist profile picture">
-                    </div>`;*/
-                            element.innerHTML = `<p>${returnData}</p>`; // Display each username in its respective element
+                    </div>`;
+                            //element.innerHTML = `<p>${returnData}</p>`; // Display each username in its respective element
                         }
                     });
                 }else{
