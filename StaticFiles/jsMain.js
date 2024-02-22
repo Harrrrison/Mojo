@@ -41,8 +41,10 @@ function fetchStats(accessToken, url, keyToFind, elementId, multiple = false) {
                 const output = returnData.map(returnData => `<p>${returnData}</p>`).join('');
                 if (multiple){
                     const artistFollowers = findData(data, 'followers');
-                    const artistGenre = findData(data, 'genre');
-                    const artistPFP = findData(data, 'images')
+                    const artistGenre = findData(data, 'genres');
+                    const artistPFP = findData(data, 'images');
+                    const artistPopularity = findData(data, 'popularity');
+                    console.log('artist G', artistGenre);
                     returnData.forEach((returnData, index) => {
                         const element = document.getElementById(`${elementId}${index+1}`);
                         if (element) {
@@ -50,9 +52,10 @@ function fetchStats(accessToken, url, keyToFind, elementId, multiple = false) {
                     <div class="artist-info">
                         <p>${index + 1}.</p>
                         <p>Name: ${returnData}</p>
-                        <p>Followers: ${artistFollowers[index]}</p>
-                        <p>Genre: ${artistGenre[index]}</p>
-                        <img src="${artistPFP[index][0]}" alt="Artist profile picture">
+                        <p>Followers: ${(Math.round((artistFollowers[index]['total']/1000))*1000).toLocaleString()}</p>
+                        <p>Genre: ${artistGenre[index][0]}, ${artistGenre[index][1]}, ${artistGenre[index][2]}</p>
+                        <p>Popularity score: ${artistPopularity[index]}</p>
+                        <img src="${artistPFP[index][0]['url']}" alt="Artist profile picture">
                     </div>`;
                             //element.innerHTML = `<p>${returnData}</p>`; // Display each username in its respective element
                         }
