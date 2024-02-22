@@ -49,7 +49,7 @@ app.get('/callback', function(req, res) {
    request.post(authOptions, function(error, response, body) {
         if (!error && response.statusCode === 200) {
             var access_token = body.access_token;
-            var uri = 'http://localhost:3000/landingPAge.html';
+            var uri = 'http://localhost:3000/statsPage.html';
             res.redirect(uri + '?access_token=' + access_token);
         }
     });
