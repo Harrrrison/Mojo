@@ -74,7 +74,7 @@ function fetchStats(accessToken, url, keyToFind, elementId, multiple = false) {
         .catch(error => console.error(error));
 }
 
-export {fetchStats};
+//export {fetchStats};
 
 if (accessToken) {
     // Use the access token to make API requests
