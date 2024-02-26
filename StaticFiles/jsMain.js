@@ -70,41 +70,74 @@ fetch('https://api.spotify.com/v1/me/top/artists?limit=10&time_range=short_term'
 
 // Top Songs
 fetch('https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=10', {
-headers: { 'Authorization': 'Bearer ' + accessToken }
-})
-.then(response => response.json())
-.then(data => {
-    try {
-        const songNames = data.items.slice(0, 10).map(song => song.name); // Extract song names. Used this as there are multiple names held. May need to be changed if we vary the number of songs we display
-        // Convert songNames array to a string for display, e.g., as a list
-        const namesList = songNames.map(name => `<li>${name}</li>`).join('');
-        document.getElementById('topSongs').innerHTML = `<h3>Top Songs</h3><ol start="1">${namesList}</ol>`;
-    } catch (e) {
-        console.error("Parsing error:", e);
-        document.getElementById('topSongs').innerHTML = "Error parsing JSON data.";
-    }
-})
-.catch(error => console.error(error));
-
-
-// Popularity score of top songs turned into uniqueness score
+    headers: { 'Authorization': 'Bearer ' + accessToken }
+    })
+    .then(response => response.json())
+    .then(data => {
+        try {
+            const songNames = data.items.slice(0, 10).map(song => song.name); // Extract song names. Used this as there are multiple names held. May need to be changed if we vary the number of songs we display
+            // Convert songNames array to a string for display, e.g., as a list
+            const namesList = songNames.map(name => `<li>${name}</li>`).join('');
+            document.getElementById('topSongs').innerHTML = `<h3>Top Songs</h3><ol start="1">${namesList}</ol>`;
+        } catch (e) {
+            console.error("Parsing error:", e);
+            document.getElementById('topSongs').innerHTML = "Error parsing JSON data.";
+        }
+    })
+    .catch(error => console.error(error));
+    
+// Top Songs ID
 fetch('https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=10', {
-headers: { 'Authorization': 'Bearer ' + accessToken }
-})
-.then(response => response.json())
-.then(data => {
-    try {
-        const popularity = findData(data, 'popularity'); // Extract popularity of each top song
-        const sum = popularity.reduce((a, b) => a + b, 0); // Sums up the popularity of each top song
-        const uniquenessScore = 100 - Math.ceil(sum / popularity.length); // Gives an average of popularity and then inverts it to get uniqueness score
-        document.getElementById('popularity').innerHTML = `<p>Uniqueness: ${uniquenessScore}%</p>`;
-    } catch (e) {
-        console.error("Parsing error:", e);
-        document.getElementById('popularity').innerHTML = "Error parsing JSON data.";
-    }
-})
-.catch(error => console.error(error));
+    headers: { 'Authorization': 'Bearer ' + accessToken }
+    })
+    .then(response => response.json())
+    .then(data => {
+        try {
+            const songIDs = data.items.slice(0, 10).map(song => song.id); // Extract song names. Used this as there are multiple names held. May need to be changed if we vary the number of songs we display
+            // Convert songNames array to a string for display, e.g., as a list
+            const IDList = songIDs.map(name => `<li>${name}</li>`).join('');
+            for (let i = 0; i < songIDs.length; i++) {
+                fetch(`https://api.spotify.com/v1/audio-features/${IDList[i]}`, {
+                    headers: { 'Authorization': 'Bearer ' + accessToken }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        try {
+                            const test = data; // Extract song names. Used this as there are multiple names held. May need to be changed if we vary the number of songs we display
+                            // Convert songNames array to a string for display, e.g., as a list
+                            document.getElementById();
+                        } catch (e) {    
+                            console.error("Parsing error:", e);
+                            document.getElementById('topSongs').innerHTML = "Error parsing JSON data.";
+                        }
+                    })
+        } 
+        } catch (e) {
+            console.error("Parsing error:", e);
+            document.getElementById('topSongs').innerHTML = "Error parsing JSON data.";
+        }
+    })
+    .catch(error => console.error(error));
 
+
+    // Popularity score of top songs turned into uniqueness score
+    fetch('https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=10', {
+        headers: { 'Authorization': 'Bearer ' + accessToken }
+    })
+    .then(response => response.json())
+    .then(data => {
+        try {
+            const popularity = findData(data, 'popularity'); // Extract popularity of each top song
+            const sum = popularity.reduce((a, b) => a + b, 0); // Sums up the popularity of each top song
+            const uniquenessScore = 100 - Math.ceil(sum / popularity.length); // Gives an average of popularity and then inverts it to get uniqueness score
+            document.getElementById('popularity').innerHTML = `<p>Uniqueness: ${uniquenessScore}%</p>`;
+        } catch (e) {
+            console.error("Parsing error:", e);
+            document.getElementById('popularity').innerHTML = "Error parsing JSON data.";
+        }
+    })
+    .catch(error => console.error(error));
+    
 }
 
 // Draggable code
