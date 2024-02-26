@@ -5,11 +5,12 @@ class
 body, html {
     display: flex;
     justify-content: center;
+    background: #d4fa71;
 }
 
 
 .background {
-    background-color: #1db954;
+    background-color: #d4fa71;
 
 }
 .flex-container {
@@ -46,6 +47,65 @@ body, html {
     gap: 10px;
 
 }
+.username-container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-end;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 5em;
+    padding: 0px 0px 0px 0px;
+    
+}
+/* Styles for the logo */
+.mojo-logo {
+    font-size: 75px;
+    font-weight: bold;
+    color: #f03aa5;
+    
+}
+.username-color {
+    color: #f03aa5;
+    font-weight: bolder;
+}
+/* top-left and top-right containers for 'Hello Username' and 'Mojo' */
+.top-left {
+    position: absolute;
+    top: 1px;
+    left: 1px;
+
+}
+.top-right{
+    display: flex;
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    
+}
+
+.All{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 0px 0px 0px 0px;
+}
+
+.overveiw-bounds-box{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 0px 0px 0px 0px;
+}
+
+.item-container1{
+
+
+}
+
+/* Styles for the buttons */
 
 button {
     background-color: #cd2990;
@@ -61,6 +121,40 @@ button {
     cursor: pointer;
 }
 
+.item-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 0px 0px 0px 0px;
+}
+
+/* Styles for landingPage */
+#overveiw-bounds-box{
+    width: 80%;
+    display: flex;
+    margin: auto;
+    flex-direction: column;
+    padding: 0px 0px 0px 0px;
+    border: 1px solid #000000;
+    background-color: #1db954;
+    border-radius: 10px;
+    align-items: center;
+    box-shadow: #000000;
+}
+
+.item-container-landing{
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #000000;
+    background-color: #096b2b;
+    border-radius: 4px;
+    box-shadow: #000000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
 /* Movable Div*/
 /*
@@ -198,3 +292,6 @@ button {
         font-size: 1.4em;
     }
 }
+
+
+

@@ -3,15 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mojo</title>
     <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
     <script src="jsMain.js"></script>
     <link rel="stylesheet" href="styleSheet.css">
     <title>Stats Page</title>
 </head>
 <body class="background">
-    <div class="item-container">
-        <div id = "data">Hello Username</div>
+    <!-- Places the 'Hello Username' block in the top left corner -->
+    <div class="All">
+
+        <div class ="top-left">
+            <div class="username-container">
+                <!-- There is an issue with 'Hello Username' that makes it difficult to manipulate the padding and flex properties etc. -->
+                <!-- The JS code overrides the properties of the flex-container, not sure how to ge§t around it but I implemented a very crude fix,
+                check jsMain-->
+
+                <div id= "data" class="username-color"></div>
+            </div>
+
+            <!-- Places 'Mojo' logo in the top right -->
+        </div>
+        <div class = "top-right">
+            <div class="mojo-logo">M O J O.</div>
+        </div>
+
+    </div>
+
+    <!-- Commented out this table for now -->
+    <!-- <div class="item-container">
         <div class="flex-container">
             <div class="item-container">
                 <div>
@@ -40,21 +59,26 @@
                             <td>5. Song</td>
                             <td>5. Artist</td>
                         </tr>
-                    </table> -->
-                    <div id="topArtists"></div>
-                        <div id="popularity"></div>
-                            <div id="topSongs"></div>
-
-                        <div id="songNames"></div>
+                    </table>
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
-<!-- <div class ="resize-drag">
+<div class ="resize-drag">
+    <div>Top Artists</div>
     <div id="TopArtistDraggableBoxHeader"></div>
     <div id="topArtists"></div>
-</div> -->
+    <div id="topSongs"></div>
+    <div id="popularity"></div>
+</div>
+<div class = "resize-drag">
+
+<div id = "testBox"></div>
+
+</div>
+
+<!--We need to contain all the boxes in a div and use the .png-->
 
 </body>
 </html>
