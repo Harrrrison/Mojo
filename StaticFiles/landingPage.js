@@ -56,7 +56,7 @@ function fetchStats(accessToken, url, keyToFind, elementId, multiple = false) {
                         <p>Followers: ${(Math.round((artistFollowers[index]['total']/1000))*1000).toLocaleString()}</p>
                         <p>Genre: ${artistGenre[index][0]}, ${artistGenre[index][1]}, ${artistGenre[index][2]}</p>
                         <p>Popularity score: ${artistPopularity[index]}</p>
-                        <img src="${artistPFP[index][1]['url']}" alt="Artist profile picture">
+                        <img src="${artistPFP[index][2]['url']}" alt="Artist profile picture" class ="artistImage">
                     </div>`; // there are 3 sizes of the images provided by spotify and are selected with the second index
                             // may also change the Genera part to just have index 0
                             // The follewers are rounded to the nearest 1000 and then formatted to the local norm of
