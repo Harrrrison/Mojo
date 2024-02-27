@@ -1,7 +1,6 @@
 // following the spotify API tutorial so this will not be close to the final implemetation
 // https://developer.spotify.com/documentation/general/guides/authorization-guide/
 
-
 require('dotenv').config();
 const express = require('express');
 const request = require('request');
@@ -11,7 +10,8 @@ const port = 3000;
 const path = require('path');
 app.use(express.static(path.join(__dirname, 'StaticFiles')));
 
-
+// not yet used - still messing around
+//const db = require('./db/index.js');
 
 const client_id = process.env.SPOTIFY_CLIENT_ID;
 const client_secret = process.env.SPOTIFY_CLIENT_SECRET;
@@ -28,7 +28,6 @@ app.get('/login', function(req, res) {
         (scopes ? '&scope=' + encodeURIComponent(scopes) : '') +
         '&redirect_uri=' + encodeURIComponent(redirect_uri));
 });
-
 // Callback service parsing the authorization token and asking for the access token
 app.get('/callback', function(req, res) {
     var code = req.query.code || null;
