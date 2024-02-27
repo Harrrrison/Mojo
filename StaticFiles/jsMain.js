@@ -207,3 +207,28 @@ interact('.resize-drag').draggable({
             }
         }
     })
+
+
+
+//new draggable div
+const div_wrapper = document.querySelector(".div-wrapper"),
+header = div_wrapper.querySelector("header");
+
+function onDrag({movementX, movementY}){
+    let getStyle = window.getComputedStyle(div_wrapper);
+    let leftVal = parseInt(getStyle.left);
+    let topVal = parseInt(getStyle.top);
+    
+    div_wrapper.style.left = `${leftVal + movementX}px`;
+    div_wrapper.style.top = `${topVal + movementY}px`;
+}
+header.addEventListener("mousedown", ()=>{
+    header.classList.add("active");
+    header.addEventListener("mousemove", onDrag);
+});
+
+document.addEventListener("mouseup", ()=>{
+    header.classList.remove("active");
+    header.removeEventListener("mousemove", onDrag);
+});
+
