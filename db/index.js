@@ -41,7 +41,7 @@ const find_or_insert_artist = async (name, uid, url) => {
 	return res.rows[0];
     }
     // artist not found, insert
-    const ins_query = "insert into artists(name, uid, url) values ($1, $2, $3) returning *;"
+    const ins_query = "insert into artists(name, uid, url) values ($1, $2, $3) returning *;";
     const res2 = await query(ins_query, [name, uid, url]);
     return res2.rows[0];
 }
@@ -58,7 +58,24 @@ const insert_page_visit = async (user, score) => {
 }
 
 const find_or_insert_song = async (name, url, artist) => {
+    const search_query = "select * from song_entries where url = $1;";
+    const res = await query(search_query, [url]);
+    var song = null;
+    if (res.rowCount > 0) {
+	song = res.rows[0];
 
+    } else {
+	// song not found, insert
+	const ins_query = "insert into song_entries(name, url, artist_id) values ($1, $2, $3) returning *;";
+	const res2 = await query(ins_query, [name, url, artist.id]);
+	song = res2.rows[0];
+    }
+    return song;
+}
+
+const link_song_visit = async (song, visit) => {
+    // TODO:
+    console.error("TODO: insert into page visit with the song");    
 }
 
 const get_page_visits_info = async (user) => {

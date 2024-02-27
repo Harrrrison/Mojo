@@ -53,7 +53,7 @@ const song_entry_query = `
 create table song_entries (
   id SERIAL PRIMARY KEY NOT NULL UNIQUE,
   name VARCHAR NOT NULL,
-  url VARCHAR NOT NULL,
+  url VARCHAR NOT NULL UNIQUE,
   artist_id SERIAL NOT NULL REFERENCES artists ON DELETE CASCADE
 );`;
 
