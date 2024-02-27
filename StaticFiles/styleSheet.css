@@ -50,7 +50,7 @@ class
 }
 /* Styles for the logo */
 .mojo-logo {
-    font-size: 100px;
+    font-size: 75px;
     font-weight: bold;
     color: #f03aa5;
     
@@ -70,80 +70,9 @@ class
     display: flex;
     position: absolute;
     top: 60px;
-    right: 1px;  
-}
-
-.username {
-    display: flex;
-    flex-direction: row;
-    align-items: last baseline;
-    background-color: lightsalmon;
-    font-size: 5em;
-    height: 100%;
-    width: 60%;
-
-}
-.logo {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    align-items: flex-start;
-    background-color: lightseagreen;
-    font-size: 4em;
-    height: 100%;
-    width: 40%;
-    
-    
+    right: 1px;
     
 }
-.column {
-    display: flex;
-    flex-direction: column;
-}
-
-.template-top {
-    display: flex;
-    flex-direction: row;
-    height: 20vh;
-    align-items: end;
-    justify-content: space-between;
-}
-
-.template-bottom {
-    display: flex;
-    height: 80vh;
-}
-
-.div-wrapper {
-    background-color: white;
-    position: absolute;
-    width: fit-content;
-    height: fit-content;
-    border-radius: 10px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    box-shadow: 10px 10px 15px rgba(0,0,0,0.06);
-}
-
-.div-wrapper header{
-    font-size: 1.5em;
-    font-weight: 600;
-    padding: 1.05em 1.875em;
-    border-bottom: 1px solid;
-}
-.div-wrapper header.active{
-    cursor: move;
-    user-select: none;
-}
-
-.div-wrapper .box-content {
-    margin: 1.875em 1.875em 2.5em;
-}
-.box-content {
-    text-align: left;
-}
-
 
 button {
     background-color: #cd2990;
@@ -159,6 +88,14 @@ button {
     cursor: pointer;
 }
 
+.item-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 0px 0px 0px 0px;
+}
 
 /* Movable Div*/
 /*
