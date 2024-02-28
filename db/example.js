@@ -3,7 +3,7 @@ const db = require("./index.js");
 
 // assume db is a database with a table users
 // where users has the format (id PKEY, username, count)
-
+// OLD
 async function example_query() {
     const res = await db.query("select * from users where username = 'tom'");
     //console.log(res);
@@ -28,10 +28,14 @@ async function example_query() {
 async function new_example() {
     const user = await db.find_or_insert_user("Matt", "ADASDASDA");
     const page_visit = await db.insert_page_visit(user, 0.5);
+    const artist = await db.find_or_insert_artist("BB", "ASDSD", "some.url");
+    const song = await db.find_or_insert_song("AA", "example.com", artist);
+    db.link_visit_to_song(page_visit, song);
     const page_visits = await db.get_page_visits_info(user);
     console.log(user);
     console.log(page_visit);
     console.log(page_visits);
+    console.log(song);
 }
 
 //example_query();
