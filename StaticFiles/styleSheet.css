@@ -5,12 +5,12 @@ class
 body, html {
     display: flex;
     justify-content: center;
-    background: #d4fa71;
+    background: #b8e186;
 }
 
 
 .background {
-    background-color: #d4fa71;
+    background-color: #b8e186;
 
 }
 .flex-container {
@@ -60,11 +60,11 @@ body, html {
 .mojo-logo {
     font-size: 75px;
     font-weight: bold;
-    color: #f03aa5;
+    color: #c51b7d;
     
 }
 .username-color {
-    color: #f03aa5;
+    color: #c51b7d;
     font-weight: bolder;
 }
 /* top-left and top-right containers for 'Hello Username' and 'Mojo' */
@@ -108,8 +108,8 @@ body, html {
 /* Styles for the buttons */
 
 button {
-    background-color: #cd2990;
-    border: 2px solid #cd2990;
+    background-color: #e9a3c9;
+    border: 2px solid #e9a3c9;
     border-radius: 10px;
     position: inherit;
     /* transform: translate(-50%, -50%); */
@@ -138,7 +138,7 @@ button {
     flex-direction: column;
     padding: 0px 0px 0px 0px;
     border: 1px solid #000000;
-    background-color: #1db954;
+    background-color: #276419;
     border-radius: 10px;
     align-items: center;
     box-shadow: #000000;
@@ -148,7 +148,7 @@ button {
     padding: 10px;
     margin-bottom: 15px;
     border: 1px solid #000000;
-    background-color: #096b2b;
+    background-color: #276419;
     border-radius: 4px;
     box-shadow: #000000;
     align-items: center;
@@ -195,7 +195,7 @@ button {
     position: absolute;
     width: 120px;
     min-height: 6.5em;
-    background-color: #1db954;
+    background-color: #276419;
     border: 1px solid #000;
     cursor: move;
     z-index: 9;
