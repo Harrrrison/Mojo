@@ -29,7 +29,7 @@ function findData(obj, keyToFind) {
     return names;
 }
 
-function fetchStats(accessToken, url, keyToFind, elementId, multiple = false) {
+function fetchStats(accessToken, url, keyToFind, elementId, type) {
     fetch(url, {
         headers: { 'Authorization': 'Bearer ' + accessToken }
     })
@@ -40,7 +40,7 @@ function fetchStats(accessToken, url, keyToFind, elementId, multiple = false) {
                 const returnData = findData(data, keyToFind); // Extract names
                 // Convert names array to a string for display, e.g., as a list
                 const output = returnData.map(returnData => `<p>${returnData}</p>`).join('');
-                if (multiple){
+                if (type === 'artist'){
                     const artistFollowers = findData(data, 'followers');
                     const artistGenre = findData(data, 'genres');
                     const artistPFP = findData(data, 'images');
@@ -54,7 +54,7 @@ function fetchStats(accessToken, url, keyToFind, elementId, multiple = false) {
                         <p>${index + 1}.</p>
                         <p>Name: ${returnData}</p>
                         <p>Followers: ${(Math.round((artistFollowers[index]['total']/1000))*1000).toLocaleString()}</p>
-                        <p>Genre: ${artistGenre[index][0]}, ${artistGenre[index][1]}, ${artistGenre[index][2]}</p>
+                        <p>Genre: ${artistGenre[index][0]}</p>
                         <p>Popularity score: ${artistPopularity[index]}</p>
                         <img src="${artistPFP[index][2]['url']}" alt="Artist profile picture" class ="artistImage">
                     </div>`; // there are 3 sizes of the images provided by spotify and are selected with the second index
@@ -63,7 +63,27 @@ function fetchStats(accessToken, url, keyToFind, elementId, multiple = false) {
                             //displaying numbbers in the users country
                         }
                     });
-                }else{
+                }else if(type === 'track'){
+
+                    const name = data.items.map(item => item.name);
+                    const genre = findData(data, 'genres');
+                    const songPFP = findData(data, 'images');
+                    const type= findData(data, 'type');
+                    returnData.forEach((returnData, index) => {
+                        const element = document.getElementById(`${elementId}${index + 5}`);
+                        if (element) {
+                            element.innerHTML = `
+                    <div class="song-info">
+                        <p>${index + 1}.</p>
+                        <p>Name: ${name[index]}</p>
+                        
+
+                        <img src="${songPFP[index][2]['url']}" alt="Song profile picture" class ="songImage">
+                    </div>`
+                        }
+                    });
+                }
+                else{
 
                     document.getElementById(elementId).innerHTML = `<ul>${output}</ul>`;
                 }
@@ -78,7 +98,10 @@ function fetchStats(accessToken, url, keyToFind, elementId, multiple = false) {
 }
 
 fetchStats(accessToken, 'https://api.spotify.com/v1/me/top/artists?limit=5&time_range=long_term',
-    'name', 'item-container', true);// need the element Id
+    'name', 'item-container', 'artist');// need the element Id
 //fetchStats(accessToken, 'https://api.spotify.com/v1/me/top/tracks?limit=5&time_range=long_term',
  //   'followers', 'artist-followers', true);
+
+fetchStats(accessToken, 'https://api.spotify.com/v1/me/top/tracks?limit=5&time_range=long_term','name',
+    'item-container', 'track');
 
