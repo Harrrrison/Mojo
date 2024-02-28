@@ -5,12 +5,12 @@ class
 body, html {
     display: flex;
     justify-content: center;
-    background: #b8e186;
+    background: #a8e495;
 }
 
 
 .background {
-    background-color: #b8e186;
+    background-color: #a8e495;
 
 }
 .flex-container {
@@ -60,11 +60,11 @@ body, html {
 .mojo-logo {
     font-size: 75px;
     font-weight: bold;
-    color: #8e0152;
+    color: #b20f74;
     
 }
 .username-color {
-    color: #8e0152;
+    color: #b20f74;
     font-weight: bolder;
 }
 /* top-left and top-right containers for 'Hello Username' and 'Mojo' */
@@ -135,7 +135,7 @@ button {
     flex-direction: column;
     padding: 0px 0px 0px 0px;
     border: 1px solid #000000;
-    background-color: #276419;
+    background-color: #0f7a18;
     border-radius: 10px;
     align-items: center;
     box-shadow: #000000;
@@ -145,7 +145,7 @@ button {
     padding: 10px;
     margin-bottom: 15px;
     border: 1px solid #000000;
-    background-color: #276419;
+    background-color: #0f7a18;
     color: white;
     font-weight: 300;
     border-radius: 4px;
@@ -194,7 +194,7 @@ button {
     position: absolute;
     width: 120px;
     min-height: 6.5em;
-    background-color: #276419;
+    background-color: #0f7a18;
     border: 1px solid #000;
     cursor: move;
     z-index: 9;
