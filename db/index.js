@@ -63,7 +63,6 @@ const find_or_insert_song = async (name, url, artist) => {
     var song = null;
     if (res.rowCount > 0) {
 	song = res.rows[0];
-
     } else {
 	// song not found, insert
 	const ins_query = "insert into song_entries(name, url, artist_id) values ($1, $2, $3) returning *;";
@@ -73,9 +72,9 @@ const find_or_insert_song = async (name, url, artist) => {
     return song;
 }
 
-const link_song_visit = async (song, visit) => {
-    // TODO:
-    console.error("TODO: insert into page visit with the song");    
+const link_visit_to_song = async (visit, song) => {
+    const q = "insert into page_visit_song_entries(page_visit_id, song_entry_id) values ($1, $2);";
+    const res = await query(q, [visit.id, song.id]);
 }
 
 const get_page_visits_info = async (user) => {
@@ -96,6 +95,8 @@ module.exports = {
     get_client,
     find_or_insert_user,
     find_or_insert_artist,
+    find_or_insert_song,
     get_page_visits_info,
-    insert_page_visit
+    insert_page_visit,
+    link_visit_to_song
 };
