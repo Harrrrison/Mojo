@@ -60,11 +60,11 @@ body, html {
 .mojo-logo {
     font-size: 75px;
     font-weight: bold;
-    color: #c51b7d;
+    color: #8e0152;
     
 }
 .username-color {
-    color: #c51b7d;
+    color: #8e0152;
     font-weight: bolder;
 }
 /* top-left and top-right containers for 'Hello Username' and 'Mojo' */
@@ -108,8 +108,8 @@ body, html {
 /* Styles for the buttons */
 
 button {
-    background-color: #e9a3c9;
-    border: 2px solid #e9a3c9;
+    background-color: #c51b7d;
+    border: 2px solid #c51b7d;
     border-radius: 10px;
     position: inherit;
     /* transform: translate(-50%, -50%); */
