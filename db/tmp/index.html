@@ -8,8 +8,10 @@
   <body>
     <style>
       body {
+	  position: absolute;
           height : 100%;
           width : 100%;
+	  background-color: rgb(173.4, 209.1, 114.75);
       }
       canvas { 
           display: block;
@@ -30,22 +32,56 @@
           right: 0;
           height: 100%;
           width: 100%;	  
+/*	  display: flex;
+	  align-items: center;
+	  justify-content: center;
+	  flex-direction: column;*/
+      }
+
+      h1.title {
+	  font-family: baskerville;
+	  font-size: 4rem;
+	  color: white;
+      }
+      
+      hr {
+	  width: 0vw;
+	  color: white;
+	  background-color: white;
+	  border: 0px;
+	  height: 0.125rem;
+	  transition: width 1s ease-in-out;
+      }
+      
+      #title-line {
+	  height: 100vh;
 	  display: flex;
 	  align-items: center;
 	  justify-content: center;
 	  flex-direction: column;
-	  color: white;
       }
 
-      h1.title {
-	  font-family: sans-serif;
-	  font-size: 4rem;
+      p {
+	  position: relative;
+	  left: 30vw;
+	  width: 40vw;
+	  color: white;
+	  font-family: arial;
       }
     </style>
     <p id="error"></p>
     <canvas id="canvas" width="800" height="600"></canvas>
     <div id="main-body">
-      <h1 class="title">TITLE</h1>
+      <div id="title-line">
+	<h1 class="title">MOJO</h1>
+	<hr id="line">
+
+      </div>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin consectetur mi eu nibh vulputate, a aliquet mauris congue. In vulputate turpis eu cursus venenatis. Fusce at porttitor orci, nec dictum dolor. Aenean elit arcu, dapibus eget mi ac, placerat gravida nulla. Proin scelerisque, mi rutrum volutpat varius, nisi quam mattis magna, sed hendrerit turpis purus in magna. Proin pellentesque, ipsum at molestie vulputate, lorem dui interdum mauris, non eleifend dolor nulla posuere est. Phasellus et molestie nisl. Mauris finibus sit amet nisl sit amet semper. Curabitur tempus dictum dui, sit amet vulputate quam sagittis sed.
+<br><br>
+Nam malesuada erat eu ante volutpat, a finibus magna pellentesque. Curabitur pellentesque quis mauris non convallis. Nam finibus gravida nulla non porta. Fusce sem quam, sagittis a fringilla nec, pharetra a ligula. Cras aliquam, augue dapibus viverra scelerisque, elit orci egestas velit, nec ornare turpis neque eget enim. Mauris non mollis sem, a euismod leo. Nunc iaculis sollicitudin scelerisque. Integer fringilla leo non porta ornare.
+<br><br>
+Nam sed turpis et metus feugiat ullamcorper sed id enim. Donec in tellus non risus accumsan ornare. Pellentesque pulvinar tempor mattis. Nunc eget metus in orci vestibulum eleifend. Duis venenatis ex a leo sodales tempor. Morbi cursus condimentum odio ac pulvinar. Duis fermentum ac lorem ut volutpat. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent sit amet elit vitae odio venenatis euismod a vitae turpis. Donec massa urna, suscipit vitae neque id, lacinia sodales sem. </p>
     </div>
   </body>
 </html>
