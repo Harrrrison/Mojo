@@ -14,8 +14,8 @@ const get_client = () => {
     return pool.connect();
 }
 
-const find_or_insert_user = async (username, uid) => {
-    if (!(/^[a-zA-Z0-9]+$/.test(uid))) {
+const find_user = async (uid) => {
+    if (!(/^spotify:user:[a-zA-Z0-9]+$/.test(uid))) {
 	console.error("invalid uid: " + uid);
 	return null;
     }
@@ -24,6 +24,15 @@ const find_or_insert_user = async (username, uid) => {
     if (res.rowCount > 0) {
 	return res.rows[0];
     }
+    return null;
+}
+
+const find_or_insert_user = async (username, uid) => {
+    const user = await find_user(uid);
+    if (user !== null) {
+	return user;
+    };
+    
     // user not found
     const insert_query = "insert into users(username, uid) values ($1, $2) returning *;"
     const res2 = await query(insert_query, [username, uid]);
@@ -93,6 +102,7 @@ const get_page_visits_info = async (user) => {
 module.exports = {
     query,
     get_client,
+    find_user,
     find_or_insert_user,
     find_or_insert_artist,
     find_or_insert_song,

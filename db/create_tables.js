@@ -4,10 +4,14 @@ const db = require("./index.js");
 
 // (must be in this order because of dependencies)
 // NOTE(matt): above is no longer true - cascade will drop all dependent tables
+// This also contains all older names for tables
+// to make sure the db is cleaned
 const drop_all_tables_query = `
 drop table if exists page_visit_song_entries cascade;
+drop table if exists page_visit_songs cascade;
 drop table if exists playlist_songs cascade;
 drop table if exists song_entries cascade;
+drop table if exists songs cascade;
 drop table if exists page_visits cascade;
 drop table if exists playlists cascade;
 drop table if exists users cascade;
@@ -49,12 +53,11 @@ create table page_visits (
 // name is probably not a unique identifier
 // but spotify must store some unique identifier for songs
 // TODO(matt): add above into table
-const song_entry_query = `
-create table song_entries (
+const songs_query = `
+create table songs (
   id SERIAL PRIMARY KEY NOT NULL UNIQUE,
   name VARCHAR NOT NULL,
-  url VARCHAR NOT NULL UNIQUE,
-  artist_id SERIAL NOT NULL REFERENCES artists ON DELETE CASCADE
+  url VARCHAR NOT NULL UNIQUE
 );`;
 
 const artist_query = `
@@ -65,13 +68,21 @@ create table artists (
   url VARCHAR NOT NULL
 );`;
 
+const song_artists_query = `
+create table song_artists (
+  id SERIAL PRIMARY KEY NOT NULL UNIQUE,
+  song_id SERIAL NOT NULL REFERENCES songs ON DELETE CASCADE,
+  artist_id SERIAL NOT NULL REFERENCES artists ON DELETE CASCADE
+);`;
+
+
 // relational table for the link between songs and
 // page visits (many-many)
-const page_visit_song_entries_query = `
-create table page_visit_song_entries (
+const page_visit_songs_query = `
+create table page_visit_songs (
   id SERIAL PRIMARY KEY NOT NULL UNIQUE,
   page_visit_id SERIAL NOT NULL REFERENCES page_visits ON DELETE CASCADE,
-  song_entry_id SERIAL NOT NULL REFERENCES song_entries ON DELETE CASCADE
+  song_id SERIAL NOT NULL REFERENCES songs ON DELETE CASCADE
 );`;
 
 // assuming a many to one relationship (one user can have many playlists, but
@@ -90,7 +101,7 @@ const playlist_songs_query = `
 create table playlist_songs (
   id SERIAL PRIMARY KEY NOT NULL UNIQUE,
   playlist_id SERIAL NOT NULL REFERENCES playlists ON DELETE CASCADE,
-  song_entry_id SERIAL NOT NULL REFERENCES song_entries ON DELETE CASCADE
+  song_id SERIAL NOT NULL REFERENCES songs ON DELETE CASCADE
 );`;
 
 async function create_tables() {
@@ -100,8 +111,9 @@ async function create_tables() {
     await db.query(users_query);
     await db.query(page_visit_query);
     await db.query(artist_query);
-    await db.query(song_entry_query);
-    await db.query(page_visit_song_entries_query);
+    await db.query(songs_query);
+    await db.query(song_artists_query);
+    await db.query(page_visit_songs_query);
     await db.query(playlist_query);
     await db.query(playlist_songs_query);
 }
