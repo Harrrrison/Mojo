@@ -1,31 +1,121 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+<!doctype html>
+<html>
+  <head>
+    <title>MOJO | welcome</title>
+    <meta charset="utf-8"/>
+    <script src="main.js" defer></script>
+  </head>
+  <body>
+    <style>
+      body {
+	  position: absolute;
+          height : 100%;
+          width : 100%;
+	  background-color: rgb(173.4, 209.1, 114.75);
+	  margin: 0;
+      }
+      canvas { 
+          display: block;
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          height: 100%;
+          width: 100%;
+      }
 
-    <!-- need to add the meta tags -->
-    <title>Mojo</title>
-    <script src="jsMain.js"></script>
-    <link rel="stylesheet" href="styleSheet.css">
+      #main-body {
+	  position: absolute;
+	  top: 0;
+	  bottom: 0;
+          left: 0;
+          right: 0;
+          height: 100%;
+          width: 100%;	  
+	  display: flex;
+	  align-items: center;
+	  justify-content: center;
+	  flex-direction: column;
+      }
 
-</head>
-<body class="background">
-    <div class="background">
-    <div class="flex-container">
-        <div class="item-container">
-            <div class="item-title">M O J O.</div>
-            <div class="item-tagline">Discover your music mojo</div>
-        </div>
-        
-        <div class="item-container">
-            <button type="button" onclick="location.href='/login'">Login with Spotify</button>
-        </div>
-        
+      #title-line {
+	  display: flex;
+	  align-items: center;
+	  justify-content: center;
+	  flex-direction: column;
+	  margin: 3rem;
+      }
+      
+      h2 {
+	  font-family: Arial, Helvetica, sans-serif;
+	  font-size: 1rem;
+	  color: white;
+	  margin: 0;
+	  width: 100%;
+	  text-align: left;
+	  padding-left: 0.15rem;
+	  padding-bottom: -0.1rem;
+      }
 
-        <!-- <a href="/login"> Login with Spotify</a> -->
-    </div>
-    </div>
-</body>
+      h1.title {
+	  font-family: Arial, Helvetica, sans-serif;
+	  font-size: 4.5rem;
+	  color: white;
+	  padding: 0px;
+	  margin: 0px;
+	  width: 100%;
+	  text-align: left;
+      }
+
+      button {
+	  color: white;
+	  font-size: 1rem;
+	  padding: 0.8rem 0.5rem;
+	  cursor: pointer;
+	  background: none;
+	  border: none;
+	  font-weight: bold;
+      }
+      button:hover {
+	  font-style: italic;
+	  transition: 0.5s;
+	  transition-timing-function: ease-out;
+      }
+      button > div {
+	  padding-top: 1px;
+	  width: 0%;
+	  height: 2px;
+	  content: '';
+	  background: white;
+      }
+      
+      button:hover > div {
+	  width: 100%;
+	  transition: 0.5s;
+	  transition-timing-function: ease-out;
+      }
+      
+      hr {
+	  width: 0vw;
+	  color: white;
+	  background-color: white;
+	  border: 0px;
+	  height: 0.125rem;
+	  transition: width 1s ease-in-out;
+      }
+    </style>
+    <p id="error"></p>
+    <canvas id="canvas" width="800" height="600"></canvas>
+    <div id="main-body">
+      <div id="empty"></div>
+      <div id="title-line">
+	<h2>Discover <em>your</em> music</h2>
+	<h1 class="title">MOJO</h1>
+      </div>
+      <button type="button" onclick="location.href='/login'">
+	Login with Spotify
+	<div></div>
+      </button>
+  </body>
 </html>

@@ -12,6 +12,7 @@ drop table if exists page_visit_songs cascade;
 drop table if exists playlist_songs cascade;
 drop table if exists song_entries cascade;
 drop table if exists songs cascade;
+drop table if exists song_artists cascade;
 drop table if exists page_visits cascade;
 drop table if exists playlists cascade;
 drop table if exists users cascade;
@@ -45,26 +46,38 @@ create table page_visits (
   id SERIAL PRIMARY KEY NOT NULL UNIQUE,
   user_id SERIAL NOT NULL REFERENCES users ON DELETE CASCADE,
   date TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  score NUMERIC(10, 1) NOT NULL
+  score NUMERIC(10, 9)
 );`;
 
 // again not sure what to do for name
 // can populate more stuff later ?
-// name is probably not a unique identifier
-// but spotify must store some unique identifier for songs
-// TODO(matt): add above into table
+// added all of the audio-features things, but
+// the precision i chose is pretty arbitrary
 const songs_query = `
 create table songs (
   id SERIAL PRIMARY KEY NOT NULL UNIQUE,
   name VARCHAR NOT NULL,
-  url VARCHAR NOT NULL UNIQUE
+  uid VARCHAR NOT NULL UNIQUE,
+  url VARCHAR NOT NULL UNIQUE,
+  image_url VARCHAR NOT NULL UNIQUE,
+  danceability NUMERIC(10, 9),
+  energy NUMERIC(10, 9),
+  key INTEGER,
+  loudness NUMERIC(10, 6),
+  mode INTEGER,
+  speechiness NUMERIC(10, 9),
+  acousticness NUMERIC(10, 9),
+  instrumentalness NUMERIC(10, 9),
+  liveness NUMERIC(10, 9),
+  valence NUMERIC(10, 9),
+  tempo NUMERIC(12, 6)
 );`;
 
 const artist_query = `
 create table artists (
   id SERIAL PRIMARY KEY NOT NULL UNIQUE,
   name VARCHAR NOT NULL,
-  uid VARCHAR NOT NULL,
+  uid VARCHAR NOT NULL UNIQUE,
   url VARCHAR NOT NULL
 );`;
 
