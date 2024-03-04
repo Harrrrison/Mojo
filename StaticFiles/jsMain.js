@@ -134,6 +134,43 @@ if (accessToken) {
 	})
 	.catch(error => console.error(error));
 
+var acoustic = 0.0;
+var dance = 0.0;
+var energy = 0.0;
+var instrument = 0.0;
+var speech = 0.0;
+var valence = 0.0;
+var liveness = 0.0;
+
+// Track features
+fetch('https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=10', {
+headers: { 'Authorization': 'Bearer ' + accessToken }
+})
+.then(response => response.json())
+.then(data => {
+    try {
+        let trackIDForFeatures = data.items.slice(0, 10).map(track => track.id); // Extract song names. Used this as there are multiple names held. May need to be changed if we vary the number of songs we display
+        for (let i = 0; i < 10; i++) {
+            fetch('https://api.spotify.com/v1/audio-features/'+ trackIDForFeatures[i], {
+            headers: { 'Authorization': 'Bearer ' + accessToken }
+            })
+            .then(response => response.json())
+            .then(data => {
+                try{
+                    console.log(data);
+                }
+              catch (e) {
+                console.error("Parsing error:", e);
+              }
+        })
+        .catch(error => console.error(error));
+        }
+    } catch (e) {
+        console.error("Parsing error:", e);
+    }
+})
+.catch(error => console.error(error));
+
 
     // Popularity score of top songs turned into uniqueness score
     fetch('https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=10', {
