@@ -12,7 +12,15 @@
 </head>
 <body>
 <div>
-    <button type="button" onclick="location.href='/to_main'">Configure your stats layout</button>
+    <script src="landingPage.js"></script>
+    <script>
+        function goToStatsPage() {
+            const userAccessToken = encodeURI(accessToken);
+            const url = "statsPage.html?access_token=" + userAccessToken;
+            window.location.href = url;
+        }
+    </script>
+    <button type="button" onclick="goToStatsPage()">Configure your stats layout</button>
 </div>
 <div id = "overview-bounds-box">
     <div id = "item-container1" class="item-container-landing">
