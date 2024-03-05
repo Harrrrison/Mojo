@@ -61,7 +61,7 @@ app.get('/to_main', function(error, response, body) {
 
     if (!error && response.statusCode === 200) {
         var access_token = body.access_token;
-        var uri = 'http://localhost:3000/landingPage.html'; // redirect to the landing page
+        var uri = 'http://localhost:3000/statsPage.html'; // redirect to the landing page
         res.redirect(uri + '?access_token=' + access_token);
     }
 });
