@@ -99,7 +99,7 @@ if (accessToken) {
 // this block can be reused for all other stats, look at the link above for the params needed in the url
 
 // Top Artists
-fetch('https://api.spotify.com/v1/me/top/artists?limit=10&time_range=short_term', {
+fetch('https://api.spotify.com/v1/me/top/artists?limit=10&time_range=long_term', {
     headers: { 'Authorization': 'Bearer ' + accessToken }
 })
     .then(response => response.json())
@@ -117,7 +117,7 @@ fetch('https://api.spotify.com/v1/me/top/artists?limit=10&time_range=short_term'
     .catch(error => console.error(error));
 
 // Top Songs
-fetch('https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=10', {
+fetch('https://api.spotify.com/v1/me/top/tracks?time_range=long_term&limit=10', {
 headers: { 'Authorization': 'Bearer ' + accessToken }
 })
 .then(response => response.json())
@@ -143,7 +143,7 @@ let instrument = 0.0;
 let speech = 0.0;
 let valence = 0.0;
 let liveness = 0.0;
-fetch('https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=10', {
+fetch('https://api.spotify.com/v1/me/top/tracks?time_range=long_term&limit=10', {
     headers: { 'Authorization': 'Bearer ' + accessToken }
 })
 .then(response => response.json())
@@ -188,7 +188,7 @@ fetch('https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=10',
 
 
 // Popularity score of top songs turned into uniqueness score
-fetch('https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=10', {
+fetch('https://api.spotify.com/v1/me/top/tracks?time_range=long_term&limit=10', {
 headers: { 'Authorization': 'Bearer ' + accessToken }
 })
 .then(response => response.json())
