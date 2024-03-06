@@ -89,7 +89,8 @@ const find_or_insert_song = async (name, uid, url, image_url) => {
     }
     return {
 	song: song,
-	need_features: !(res.rowCount > 0),
+	// only need to check one feature, as they are all set at once
+	need_features: (song.danceability === null),
     };
 }
 
@@ -116,9 +117,9 @@ const link_artist_to_song = async (artist, song) => {
     return res;
 }
 
-const link_song_to_visit = async (song, visit) => {
-    const q = "insert into page_visit_songs(page_visit_id, song_id) values ($1, $2);";
-    const res = await query(q, [visit.id, song.id]);
+const link_song_and_artist_to_visit = async (song, artist, visit, term, ranking) => {
+    const q = "insert into page_visit_rankings(page_visit_id, song_id, artist_id, term, ranking) values ($1, $2, $3, $4, $5);";
+    const res = await query(q, [visit.id, song.id, artist.id, term, ranking]);
 }
 
 const get_page_visits_info = async (user) => {
@@ -128,9 +129,22 @@ const get_page_visits_info = async (user) => {
     var i = 0;
     for (const row of res.rows) {
 	// fetch the song info for each page visit
-	const song_query = "select * from songs where id in (select song_id from page_visit_songs where page_visit_id = $1)";
+	// TODO: a better way to do this in a single query?
+	const song_query = "select * from (page_visit_rankings join songs on page_visit_rankings.song_id = songs.id) where page_visit_id = $1;";
 	const res2 = await query(song_query, [row.id]);
+	var j = 0;
+	for (song of res2.rows) {
+	    const artist_query = "select * from (song_artists join artists on song_artists.artist_id = artists.id) where song_id = $1;";
+	    const res3 = await query(artist_query, [song.id]);
+	    res2.rows[j].artists = res3.rows;
+	    j += 1;
+	}
 	out[i].songs = res2.rows;
+
+	const artist_query = "select * from (page_visit_rankings join artists on page_visit_rankings.artist_id = artists.id) where page_visit_id = $1;";
+	const res4 = await query(artist_query, [row.id]);
+	out[i].artists = res4.rows;
+
 	i += 1;
     }
     return out;
@@ -147,6 +161,6 @@ module.exports = {
     find_or_insert_song,
     add_song_features,
     get_page_visits_info,
-    link_song_to_visit,
+    link_song_and_artist_to_visit,
     set_page_visit_score
 };

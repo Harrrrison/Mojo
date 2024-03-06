@@ -7,7 +7,8 @@ const axios = require('axios');
 //const request = require('request');
 
 const app = express();
-const port = 3000;
+// NOTE: changed env too (didn't check in though)
+const port = 8888; // NOCHECKIN: done because i accidentally rate limited original app
 const path = require('path');
 app.use(express.static(path.join(__dirname, 'StaticFiles')));
 
@@ -30,34 +31,46 @@ app.get('/login', function(req, res) {
 		 '&redirect_uri=' + encodeURIComponent(redirect_uri));
 });
 
-async function create_page_visit(auth_code, user) {    
+async function store_page_visit_songs_and_artists_and_get_score(auth_code, page_visit, term) {
     var auth_header = { "Authorization": "Bearer " + auth_code };
-    const page_visit = await db.create_page_visit(user);
     // get top songs
     const sresponse = await axios({
-	url: "https://api.spotify.com/v1/me/top/tracks?limit=10&time_range=short_term",
+	url: `https://api.spotify.com/v1/me/top/tracks?limit=10&time_range=${term}_term`,
 	headers: auth_header,
     });
-    body = sresponse.data;
+    const aresponse = await axios({
+	url: `https://api.spotify.com/v1/me/top/artists?limit=10&time_range=${term}_term`,
+	headers: auth_header,
+    });
+    const body = sresponse.data;
     if (!body) {
+	return null;
+    }
+    const body2 = aresponse.data;
+    if (!body2) {
 	return null;
     }
     // TEMP: calculate the score as average of (1 - popularity/100) of the songs
     var total_score = 0;
     var count = 0;
-    for (const song of body.items) {
+    const songs_need_features_ids = [];
+    const songs_need_features = [];
+    for (var i = 0; i < body.items.length; ++i) {
+	const song = body.items[i];
+	const artist_ = body2.items[i];
 	const song_image_url = song.album.images[0].url;
 	var song_ = await db.find_or_insert_song(song.name, song.uri,
 						 song.external_urls.spotify,
 						 song_image_url);
+	
+	var artist__ = await db.find_or_insert_artist(artist_.name, artist_.uri,
+						      artist_.external_urls.spotify);
+	
 	if (song_.need_features) {
 	    const song_id = song.uri.slice(14);
-	    const audio_features = await axios({
-		url: "https://api.spotify.com/v1/audio-features/" + song_id,
-		headers: auth_header,
-	    });
-	    const features = audio_features.data;
-	    song_ = await db.add_song_features(song_.song, features);
+	    songs_need_features_ids.push(song_id);
+	    songs_need_features.push(song_.song);
+	    song_ = song_.song;
 	} else {
 	    song_ = song_.song;
 	}
@@ -65,17 +78,39 @@ async function create_page_visit(auth_code, user) {
 	    const _ = db.find_or_insert_artist(artist.name,
 					       artist.uri,
 					       artist.external_urls.spotify)
-		  .then((artist_) => {
-		      db.link_artist_to_song(artist_, song_);
+		  .then((_artist) => {
+		      db.link_artist_to_song(_artist, song_);
 		  });
 	}
 	total_score += 1.0 - (+song.popularity / 100.0);
 	count += 1;
-	const ignore = await db.link_song_to_visit(song_, page_visit);
+	const ignore = await db.link_song_and_artist_to_visit(song_, artist__,
+							      page_visit, term, count);
     }
-    const score = total_score / count;
+    if (songs_need_features.length > 0) {
+	const audio_features = await axios({
+	    url: "https://api.spotify.com/v1/audio-features?ids=" + songs_need_features_ids.join(),
+	    headers: auth_header,
+	}).catch((error) => {
+	    console.log("ERROR: fetching features for songs: " + songs_need_features_ids.join());
+	    console.log("ERROR: response: ", error.response.data);
+	});
+	var i = 0;
+	for (song of songs_need_features) {
+	    db.add_song_features(song, audio_features.data.audio_features[i]);
+	    i += 1;
+	}
+    }
+    return total_score / count;    
+}
+
+async function create_page_visit(auth_code, user) {    
+    const page_visit = await db.create_page_visit(user);
+    var score = 0;
+    score += await store_page_visit_songs_and_artists_and_get_score(auth_code, page_visit, "short");
+    score += await store_page_visit_songs_and_artists_and_get_score(auth_code, page_visit, "medium");
+    score += await store_page_visit_songs_and_artists_and_get_score(auth_code, page_visit, "long");
     const _ = db.set_page_visit_score(page_visit, score);
-    //console.log(body);
 }
 
 async function get_and_store_user_data(auth_code) {
@@ -121,28 +156,64 @@ app.get('/callback', async (req, res) => {
 		return;
 	    }
 	    const user = await get_and_store_user_data(response.data.access_token);
-	    var uri = 'http://localhost:3000/stats';
+	    var uri = `http://localhost:${port}/stats`;
 	    res.redirect(uri + '?user_id=' + user.uid);
 	});
-    /*
-    axios.post("https://accounts.spotify.com/api/", new URLSearchParams({
-        code: code,
-        redirect_uri: redirect_uri,
-        grant_type: 'authorization_code'
-    }),  options).then(async (response) => {
-	if (response.status !== 200) {
-	    // TODO: how to handle
-	    return;
-	}
-	var uri = 'http://localhost:3000/stats';
-	const user = await get_and_store_user_data(body.access_token);
-	var uri = 'http://localhost:3000/stats';
-	res.redirect(uri + '?user_id=' + user.uid);	
-    }).catch((err) => {
-	console.log(err);
-	});
-    */
 });
+
+function build_top_songs_component(page_visit_data, term) {
+    const songs_list = page_visit_data.songs;
+    var songs_html = "";
+    const songs = songs_list.filter((s) => { return s.term === term; });
+    songs.sort((a, b) => { return a.ranking - b.ranking; });
+    var i = 0;
+    for (song of songs) {
+	if (i >= 5) { break; }
+	const song_html = `
+<div class="song-item">
+<!--  <a href=${song.url}><img src=${song.image_url}></a> -->
+  <p>${i+1}</p>
+  <div>
+    <p>${song.artists[0].name}</p>
+    <h2>${song.name}</h2>
+  </div>
+</div>
+`;
+	songs_html += song_html;
+	i += 1;
+    }
+    return `
+<div class="draggable songs-list">
+  ${songs_html}
+</div>
+`;
+}
+
+function build_top_artists_component(page_visit_data, term) {
+    const artists_list = page_visit_data.artists;
+    var artists_html = "";
+    const artists = artists_list.filter((s) => { return s.term === term; });
+    artists.sort((a, b) => { return a.ranking - b.ranking; });
+    var i = 0;
+    for (artist of artists) {
+	if (i >= 5) { break; }
+	const artist_html = `
+<div class="song-item">
+  <p>${i+1}</p>
+  <div>
+    <h2>${artist.name}</h2>
+  </div>
+</div>
+`;
+	artists_html += artist_html;
+	i += 1;
+    }
+    return `
+<div class="draggable songs-list">
+  ${artists_html}
+</div>
+`;
+}
 
 app.get("/stats", async (req, res) => {
     const user_id = req.query.user_id;
@@ -154,33 +225,48 @@ app.get("/stats", async (req, res) => {
 	return;
     }
     const data = await db.get_page_visits_info(user);
-    console.log(data);
     const recent_visit = data[data.length - 1];
-    var songs = "";
-    for (song of recent_visit.songs) {
-	const song_html = `
-<div>
-  <h2>${song.name}</h2>
-  <p>${song.tempo}</p>
-  <img src=${song.image_url}></img>
-</div>
-`;
-	songs += song_html;
-    }
+
+    const recent_songs = build_top_songs_component(recent_visit, "short");
+    const medium_term_songs = build_top_songs_component(recent_visit, "medium");
+    const long_term_songs = build_top_songs_component(recent_visit, "long");
+
+    const recent_artists = build_top_artists_component(recent_visit, "short");
+    const medium_term_artists = build_top_artists_component(recent_visit, "medium");
+    const long_term_artists = build_top_artists_component(recent_visit, "long");
+    
     const html = `
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
-    <script src="jsMain.js"></script>
-    <link rel="stylesheet" href="styleSheet.css">
+    <script src="draggable.js" defer></script>
+    <link rel="stylesheet" href="temp_style.css">
     <title>MOJO | ${user.username}</title>
 </head>
 <body class="background">
-    <div id="data">Hello ${user.username}</div>
-    <ul>${songs}</ul>
+    <h1 id="intro">Hello <em>${user.username}</em></h1>
+    <div id="rest">
+        <div id="card-container">
+            <div id="card-container-col1">
+                <div id="card-mojo"><em>${user.username}'s</em> mojo</div>
+                <div class="draggable-container-box"></div>
+                <div class="draggable-container-box"></div>
+            </div>
+            <div id="card-container-col2">
+                <div class="draggable-container-box">${medium_term_artists}</div>
+                <div class="draggable-container-box">${long_term_artists}</div>
+                <div class="draggable-container-box"></div>
+            </div>
+        </div>
+        <div id="content-container">
+            <div class="draggable-container-box">${medium_term_songs}</div>
+            <div class="draggable-container-box">${recent_songs}</div>
+            <div class="draggable-container-box">${long_term_songs}</div>
+            <div class="draggable-container-box">${recent_artists}</div>
+        </div>
+    </div>
 </body>
 </html>
 `;
@@ -193,7 +279,7 @@ app.get('/to_main', function(error, response, body) {
 
     if (!error && response.statusCode === 200) {
         var access_token = body.access_token;
-        var uri = 'http://localhost:3000/landingPage.html'; // redirect to the landing page
+        var uri = `http://localhost:${port}/landingPage.html`; // redirect to the landing page
         res.redirect(uri + '?access_token=' + access_token);
     }
 });

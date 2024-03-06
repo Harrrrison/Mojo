@@ -9,6 +9,7 @@ const db = require("./index.js");
 const drop_all_tables_query = `
 drop table if exists page_visit_song_entries cascade;
 drop table if exists page_visit_songs cascade;
+drop table if exists page_visit_rankings cascade;
 drop table if exists playlist_songs cascade;
 drop table if exists song_entries cascade;
 drop table if exists songs cascade;
@@ -17,6 +18,7 @@ drop table if exists page_visits cascade;
 drop table if exists playlists cascade;
 drop table if exists users cascade;
 drop table if exists artists cascade;
+drop type if exists query_length;
 `;
 
 // NOTE: OLD (now not bothering with sized strings, just let the perf suffer
@@ -59,7 +61,7 @@ create table songs (
   name VARCHAR NOT NULL,
   uid VARCHAR NOT NULL UNIQUE,
   url VARCHAR NOT NULL UNIQUE,
-  image_url VARCHAR NOT NULL UNIQUE,
+  image_url VARCHAR NOT NULL,
   danceability NUMERIC(10, 9),
   energy NUMERIC(10, 9),
   key INTEGER,
@@ -91,11 +93,15 @@ create table song_artists (
 
 // relational table for the link between songs and
 // page visits (many-many)
-const page_visit_songs_query = `
-create table page_visit_songs (
+const page_visit_rankings_query = `
+create type query_length as enum ('short', 'medium', 'long');
+create table page_visit_rankings (
   id SERIAL PRIMARY KEY NOT NULL UNIQUE,
   page_visit_id SERIAL NOT NULL REFERENCES page_visits ON DELETE CASCADE,
-  song_id SERIAL NOT NULL REFERENCES songs ON DELETE CASCADE
+  song_id SERIAL NOT NULL REFERENCES songs ON DELETE CASCADE,
+  artist_id SERIAL NOT NULL REFERENCES artists ON DELETE CASCADE,
+  term query_length NOT NULL,
+  ranking INTEGER NOT NULL
 );`;
 
 // assuming a many to one relationship (one user can have many playlists, but
@@ -126,7 +132,7 @@ async function create_tables() {
     await db.query(artist_query);
     await db.query(songs_query);
     await db.query(song_artists_query);
-    await db.query(page_visit_songs_query);
+    await db.query(page_visit_rankings_query);
     await db.query(playlist_query);
     await db.query(playlist_songs_query);
 }
