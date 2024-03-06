@@ -66,18 +66,16 @@ function fetchStats(accessToken, url, keyToFind, elementId, type) {
                 }else if(type === 'track'){
 
                     const name = data.items.map(item => item.name);
-                    const genre = findData(data, 'genres');
+                    const genres = data.items.map(item => item.genres);
                     const songPFP = findData(data, 'images');
                     const type= findData(data, 'type');
                     returnData.forEach((returnData, index) => {
-                        const element = document.getElementById(`${elementId}${index + 5}`);
+                        const element = document.getElementById(`${elementId}${index + 6}`);
                         if (element) {
                             element.innerHTML = `
                     <div class="song-info">
                         <p>${index + 1}.</p>
                         <p>Name: ${name[index]}</p>
-                        
-
                         <img src="${songPFP[index][2]['url']}" alt="Song profile picture" class ="songImage">
                     </div>`
                         }

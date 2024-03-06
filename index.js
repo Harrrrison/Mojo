@@ -188,6 +188,16 @@ app.get("/stats", async (req, res) => {
     res.send(Buffer.from(html));
 });
 
+app.get('/to_main', function(error, response, body) {
+    // TODO: WHY IS THIS NOT LOADING ARRRRRRRRRRRRRRTRR
+
+    if (!error && response.statusCode === 200) {
+        var access_token = body.access_token;
+        var uri = 'http://localhost:3000/landingPage.html'; // redirect to the landing page
+        res.redirect(uri + '?access_token=' + access_token);
+    }
+});
+
 app.listen(port, () => {
     console.log(`Listening on port ${port}`);
 });
