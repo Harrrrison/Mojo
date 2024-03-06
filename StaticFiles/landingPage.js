@@ -49,12 +49,14 @@ function fetchStats(accessToken, url, keyToFind, elementId, type) {
                     returnData.forEach((returnData, index) => {
                         const element = document.getElementById(`${elementId}${index+1}`);
                         if (element) {
+                            let genre = artistGenre[index][0];
+                            genre = genre.replace(/\b\w/g, c => c.toUpperCase());
                             element.innerHTML= `
                     <div class="artist-info">
                         <p>${index + 1}.</p>
                         <p>Name: ${returnData}</p>
                         <p>Followers: ${(Math.round((artistFollowers[index]['total']/1000))*1000).toLocaleString()}</p>
-                        <p>Genre: ${artistGenre[index][0]}</p>
+                        <p>Genre: ${genre}</p>
                         <p>Popularity score: ${artistPopularity[index]}</p>
                         <img src="${artistPFP[index][2]['url']}" alt="Artist profile picture" class ="artistImage">
                     </div>`; // there are 3 sizes of the images provided by spotify and are selected with the second index
