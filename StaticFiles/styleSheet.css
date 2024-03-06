@@ -141,6 +141,7 @@ button {
     border-radius: 10px;
     align-items: center;
     box-shadow: #000000;
+    justify-content: center;
 }
 
 .item-container-landing{
@@ -149,7 +150,7 @@ button {
     border: 1px solid #000000;
     background-color: #0f7a18;
     color: white;
-    font-weight: 300;
+    font-size: large;
     border-radius: 4px;
     box-shadow: #000000;
     align-items: center;

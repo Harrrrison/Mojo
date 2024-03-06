@@ -54,7 +54,7 @@ function fetchStats(accessToken, url, keyToFind, elementId, type) {
                             element.innerHTML= `
                     <div class="artist-info">
                         <p>${index + 1}.</p>
-                        <p>Name: ${returnData}</p>
+                        <p>Artist: ${returnData}</p>
                         <p>Followers: ${(Math.round((artistFollowers[index]['total']/1000))*1000).toLocaleString()}</p>
                         <p>Genre: ${genre}</p>
                         <p>Popularity score: ${artistPopularity[index]}</p>
@@ -77,7 +77,7 @@ function fetchStats(accessToken, url, keyToFind, elementId, type) {
                             element.innerHTML = `
                     <div class="song-info">
                         <p>${index + 1}.</p>
-                        <p>Name: ${name[index]}</p>
+                        <p>Song: ${name[index]}</p>
                         <img src="${songPFP[index][2]['url']}" alt="Song profile picture" class ="songImage">
                     </div>`
                         }
