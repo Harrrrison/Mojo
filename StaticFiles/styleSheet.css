@@ -6,6 +6,7 @@ body, html {
     display: flex;
     justify-content: center;
     background: #a8e495;
+    font-family: sans-serif;
 }
 
 
@@ -143,7 +144,7 @@ button {
 
 .item-container-landing{
     padding: 10px;
-    margin-bottom: 15px;
+    margin: 15px;
     border: 1px solid #000000;
     background-color: #0f7a18;
     color: white;
