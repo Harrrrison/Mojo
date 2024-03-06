@@ -5,13 +5,12 @@ class
 body, html {
     display: flex;
     justify-content: center;
-    background: #a8e495;
+    background: rgb(173.4, 209.1, 114.75);
 }
 
 
 .background {
-    background-color: #a8e495;
-
+    background-color: rgb(173.4, 209.1, 114.75);
 }
 .flex-container {
     display: flex;
