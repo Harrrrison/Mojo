@@ -157,6 +157,10 @@ button {
     grid-template-columns: 1fr 1fr;
 }
 
+.item-container:link{
+    text-decoration: none;
+}
+
 .artistImage{
     position: absolute;
     top: 0;

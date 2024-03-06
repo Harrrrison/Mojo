@@ -45,14 +45,17 @@ function fetchStats(accessToken, url, keyToFind, elementId, type) {
                     const artistGenre = findData(data, 'genres');
                     const artistPFP = findData(data, 'images');
                     const artistPopularity = findData(data, 'popularity');
+                    const artistLink = findData(data, 'external_urls'); // dont touch it breaks
+                    console.log("artist Link: ", artistLink);
                     console.log('artist G', artistGenre);
                     returnData.forEach((returnData, index) => {
                         const element = document.getElementById(`${elementId}${index+1}`);
+                        const artistLink = data.items.map(item => item.external_urls.spotify);
                         if (element) {
                             element.innerHTML= `
                     <div class="artist-info">
                         <p>${index + 1}.</p>
-                        <p>Name: ${returnData}</p>
+                        <p>Name: <a style="color: #b20f74; text-decoration: none" href="${artistLink[index]}">${returnData}</a></p>
                         <p>Followers: ${(Math.round((artistFollowers[index]['total']/1000))*1000).toLocaleString()}</p>
                         <p>Genre: ${artistGenre[index][0]}</p>
                         <p>Popularity score: ${artistPopularity[index]}</p>
@@ -69,8 +72,9 @@ function fetchStats(accessToken, url, keyToFind, elementId, type) {
                     const genre = findData(data, 'genres');
                     const songPFP = findData(data, 'images');
                     const type= findData(data, 'type');
+                    //const artistLink = data.items.map(item => item.external_urls);
                     returnData.forEach((returnData, index) => {
-                        const element = document.getElementById(`${elementId}${index + 5}`);
+                        const element = document.getElementById(`${elementId}${index + 6}`);
                         if (element) {
                             element.innerHTML = `
                     <div class="song-info">
