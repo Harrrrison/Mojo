@@ -87,7 +87,7 @@ if (accessToken) {
                 const username = findData(data, 'display_name'); // Extract names
                 // Convert names array to a string for display, e.g., as a list
                 // Added <span> tag to change color of the text
-                const output = username.map(username => `<p> <span style="color: black;">Hello</span> ${username}.</p>`).join('');
+                const output = username.map(username => `<p> <span style="color: black;">Hello</span> <span class="username">${username}</span>.</p>`).join('');
                 document.getElementById('data').innerHTML = `<p>${output}</p>`;
             } catch (e) {
                 console.error("Parsing error:", e);
@@ -267,3 +267,36 @@ interact('.resize-drag').draggable({
             }
         }
     })
+
+
+// another way to resize and drag divs
+
+const elem = document.querySelector(".box");
+
+elem.addEventListener('mousedown', mousedown);
+
+function mousedown(e) {
+    window.addEventListener('mousemove', mousemove);
+    window.addEventListener('mouseup', mouseup);
+
+    let prevX = e.clientX;
+    let prevY = e.clientY;
+
+    function mousemove(e) {
+        let newX = prevX - e.clientX;
+        let newY = prevY - e.clientY;
+
+        const rect = elem.getBoundingClientRect();
+
+        elem.style.left = rect.left -  newX + "px";
+        elem.style.top = rect.top - newY + "px";
+
+        prevX = e.clientX;
+        prevY = e.clientY;
+    }
+
+    function mouseup() {
+        window.removeEventListener('mousemove', mousemove);
+        window.removeEventListener('mouseup', mouseup)
+    }
+}
