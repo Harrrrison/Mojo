@@ -8,7 +8,7 @@ const axios = require('axios');
 
 const app = express();
 // NOTE: changed env too (didn't check in though)
-const port = 8888; // NOCHECKIN: done because i accidentally rate limited original app
+const port = 3000; // NOCHECKIN: done because i accidentally rate limited original app
 const path = require('path');
 app.use(express.static(path.join(__dirname, 'StaticFiles')));
 
@@ -215,13 +215,75 @@ function build_top_artists_component(page_visit_data, term) {
 `;
 }
 
+function get_quant_stats_for_property(objs, prop) {
+    var sum = 0;
+    var max = Number.NEGATIVE_INFINITY;
+    var min = Number.POSITIVE_INFINITY;
+
+    const cnt = objs.length;
+    for (obj of objs) {
+	const v = +obj[prop];
+	sum += v; // must be coercible to integer
+	if (v < min) {
+	    min = v;
+	}
+	if (v > max) {
+	    max = v;
+	}
+    }
+    const mean = sum / cnt;
+    var squared_diff_sum = 0;
+    for (obj of objs) {
+	const diff = (+obj[prop]) - mean;
+	squared_diff_sum += diff * diff;
+    }
+    const variance = squared_diff_sum / (cnt - 1);
+    const std_deviation = Math.sqrt(variance);
+
+    return {
+	mean: mean,
+	variance: variance,
+	std_deviation: std_deviation,
+	min: min,
+	max: max
+    };
+}
+
 app.get("/stats", async (req, res) => {
+    res.set("Content-Type", "text/html");
+    
     const user_id = req.query.user_id;
     if (!user_id) {
+	const html = `
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>MOJO | Missing User ID</title>
+  </head>
+  <body>
+    <h1>ERROR</h1>
+    <p>bad url</p>
+  </body>
+</html>
+`;
+	res.send(Buffer.from(html));
 	return;
     }
     const user = await db.find_user(user_id);
     if (!user) {
+	const html = `
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>MOJO | Missing User ID</title>
+  </head>
+  <body>
+    <h1>ERROR</h1>
+    <p>invalid user</p>
+  </body>
+</html>
+`;
+	res.send(Buffer.from(html));
 	return;
     }
     const data = await db.get_page_visits_info(user);
@@ -231,9 +293,50 @@ app.get("/stats", async (req, res) => {
     const medium_term_songs = build_top_songs_component(recent_visit, "medium");
     const long_term_songs = build_top_songs_component(recent_visit, "long");
 
+//    console.log(recent_visit.songs[0]);
+    const attrs = [
+	"danceability", "energy", "speechiness", "acousticness", "instrumentalness",
+	"liveness", "valence", "tempo"
+    ];
+    var datas = [];
+    const some_songs = recent_visit.songs.filter((s) => { return s.term === "short"; });
+    for (attr of attrs) {
+	var d = get_quant_stats_for_property(some_songs, attr);
+	if (attr === "tempo") {
+	    d.mean /= 300.0; // NOTE: some arbitrary high bpm
+	}
+	datas.push(d);
+
+    }
+
     const recent_artists = build_top_artists_component(recent_visit, "short");
     const medium_term_artists = build_top_artists_component(recent_visit, "medium");
     const long_term_artists = build_top_artists_component(recent_visit, "long");
+
+
+    const make_charts = `
+const stats = document.getElementById("stats-chart");
+if (stats) {
+   console.log("found");
+}
+new Chart(stats, {
+  type: 'radar',
+  data: {
+    labels: [${attrs.map(attr => "'" + attr + "'").join()}],
+    datasets: [
+      {
+        data: [${datas.map(d => d.mean).join()}],
+        borderColor: 'rgb(228, 119, 128)',
+      },
+    ],
+  },
+  options: {
+    scale: {
+      r: { suggestedMin: 0, suggestedMax: 1},
+    },
+  },
+});
+`;
     
     const html = `
 <!DOCTYPE html>
@@ -242,16 +345,21 @@ app.get("/stats", async (req, res) => {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="draggable.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script> 
     <link rel="stylesheet" href="temp_style.css">
     <title>MOJO | ${user.username}</title>
+
 </head>
 <body class="background">
     <h1 id="intro">Hello <em>${user.username}</em></h1>
+    <canvas id="stats-chart"></canvas>
+    <script>${make_charts}</script>
     <div id="rest">
         <div id="card-container">
             <div id="card-container-col1">
                 <div id="card-mojo"><em>${user.username}'s</em> mojo</div>
-                <div class="draggable-container-box"></div>
+                <div class="draggable-container-box">
+                </div>
                 <div class="draggable-container-box"></div>
             </div>
             <div id="card-container-col2">
@@ -270,7 +378,7 @@ app.get("/stats", async (req, res) => {
 </body>
 </html>
 `;
-    res.set("Content-Type", "text/html");
+
     res.send(Buffer.from(html));
 });
 
