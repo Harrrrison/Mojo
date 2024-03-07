@@ -7,8 +7,7 @@ const axios = require('axios');
 //const request = require('request');
 
 const app = express();
-// NOTE: changed env too (didn't check in though)
-const port = 3000; // NOCHECKIN: done because i accidentally rate limited original app
+const port = 3000;
 const path = require('path');
 app.use(express.static(path.join(__dirname, 'StaticFiles')));
 
@@ -293,50 +292,80 @@ app.get("/stats", async (req, res) => {
     const medium_term_songs = build_top_songs_component(recent_visit, "medium");
     const long_term_songs = build_top_songs_component(recent_visit, "long");
 
-//    console.log(recent_visit.songs[0]);
-    const attrs = [
-	"danceability", "energy", "speechiness", "acousticness", "instrumentalness",
-	"liveness", "valence", "tempo"
-    ];
-    var datas = [];
-    const some_songs = recent_visit.songs.filter((s) => { return s.term === "short"; });
-    for (attr of attrs) {
-	var d = get_quant_stats_for_property(some_songs, attr);
-	if (attr === "tempo") {
-	    d.mean /= 300.0; // NOTE: some arbitrary high bpm
+    //    console.log(recent_visit.songs[0]);
+
+    var charts_js = "";
+    var charts_html = `<div style="height:500px; display: grid; grid-template-columns: 500px 500px 500px;">`;
+    for (range of ["short", "medium", "long"]) {
+	const attrs = [
+	    "danceability", "energy", "speechiness", "acousticness", "instrumentalness",
+	    "liveness", "valence", "tempo"
+	];
+	var datas = [];
+	const some_songs = recent_visit.songs.filter((s) => { return s.term === "short"; });
+	for (attr of attrs) {
+	    var d = get_quant_stats_for_property(some_songs, attr);
+	    if (attr === "tempo") {
+		d.mean /= 300.0; // NOTE: some arbitrary high bpm
+	    }
+	    datas.push(d);
+
 	}
-	datas.push(d);
-
-    }
-
-    const recent_artists = build_top_artists_component(recent_visit, "short");
-    const medium_term_artists = build_top_artists_component(recent_visit, "medium");
-    const long_term_artists = build_top_artists_component(recent_visit, "long");
-
-
-    const make_charts = `
-const stats = document.getElementById("stats-chart");
-if (stats) {
-   console.log("found");
-}
-new Chart(stats, {
+	charts_html += `<canvas id="stats-chart-${range}"></canvas>`;
+	charts_js += `
+const stats_${range} = document.getElementById("stats-chart-${range}");
+stats_${range}.style.width = "250px !important";
+stats_${range}.style.height = "250px !important";
+Chart.defaults.color = '#ffffff';
+new Chart(stats_${range}, {
   type: 'radar',
   data: {
     labels: [${attrs.map(attr => "'" + attr + "'").join()}],
     datasets: [
       {
         data: [${datas.map(d => d.mean).join()}],
+        fill: true,
         borderColor: 'rgb(228, 119, 128)',
+        backgroundColor: 'rgb(228, 119, 128, 0.2)',
+        pointBackgroundColor: 'rgb(228, 119, 128)',
+        pointBorderColor: 'rgb(228, 119, 128)',
+        pointStyle: false,
       },
     ],
   },
   options: {
-    scale: {
-      r: { suggestedMin: 0, suggestedMax: 1},
+    events: [],
+    plugins: {
+      legend: { display: false },
+      tooltip: { display: false }
+    },
+    scales: {
+      r: {
+        suggestedMin: 0,
+        suggestedMax: 1,
+        ticks: {
+          display: false,
+          maxTicksLimit: 4
+        },
+        angleLines: {
+          color: 'rgb(255, 255, 255, 0.25)',
+//          display: false
+        },
+        grid: {
+          color: 'rgb(255, 255, 255, 0.25)',
+        }
+      },
     },
   },
 });
 `;
+
+    }
+    charts_html += "</div>";
+
+    const recent_artists = build_top_artists_component(recent_visit, "short");
+    const medium_term_artists = build_top_artists_component(recent_visit, "medium");
+    const long_term_artists = build_top_artists_component(recent_visit, "long");
     
     const html = `
 <!DOCTYPE html>
@@ -345,15 +374,15 @@ new Chart(stats, {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="draggable.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.29.1.min.js" charset="utf-8"></script>
     <link rel="stylesheet" href="temp_style.css">
     <title>MOJO | ${user.username}</title>
-
 </head>
 <body class="background">
     <h1 id="intro">Hello <em>${user.username}</em></h1>
-    <canvas id="stats-chart"></canvas>
-    <script>${make_charts}</script>
+    ${charts_html}
+    <script>${charts_js}</script>
     <div id="rest">
         <div id="card-container">
             <div id="card-container-col1">
