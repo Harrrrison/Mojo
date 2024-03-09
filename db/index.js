@@ -27,6 +27,20 @@ const find_user = async (uid) => {
     return null;
 }
 
+const find_user_visit = async (uid, visit_id) => {
+    if (!(/^spotify:user:[a-zA-Z0-9]+$/.test(uid))) {
+	console.error("invalid uid: " + uid);
+	return null;
+    }
+    const search_query = "select * from page_visits join users on page_visits.user_id = users.id where users.uid = $1 and page_visits.hash = $2;";
+    const res = await query(search_query, [uid, visit_id]);
+    if (res.rowCount > 0) {
+	return res.rows[0];
+    }
+    return null;
+}
+
+
 const find_or_insert_user = async (username, uid) => {
     const user = await find_user(uid);
     if (user !== null) {
@@ -45,8 +59,17 @@ const create_page_visit = async (user) => {
     return res.rows[0];
 }
 
+const set_page_visit_hash = async (visit) => {
+    const q = "update page_visits set hash = $1 where id = $2 returning *;"
+
+    const hash = require('crypto').createHash('md5')
+	  .update(visit.date.toString()).digest('hex');
+    const res = await query(q, [hash, visit.id]);
+    return res.rows[0];
+}
+
 const set_page_visit_score = async(page_visit, score) => {
-    const q = "update page_visits set score = $1 where id = $2";
+    const q = "update page_visits set score = $1 where id = $2;";
     const _ = query(q, [score, page_visit.id]);
 }
 
@@ -110,7 +133,7 @@ const link_artist_to_song = async (artist, song) => {
     const res = await query(query1, [song.id, artist.id]);
     if (res.rowCount == 0) {
 	const query2 =
-	      "insert into song_artists(song_id, artist_id) values ($1, $2) returning *";
+	      "insert into song_artists(song_id, artist_id) values ($1, $2) returning *;";
 	const res2 = await query(query2, [song.id, artist.id]);
 	return res2;
     }
@@ -120,6 +143,26 @@ const link_artist_to_song = async (artist, song) => {
 const link_song_and_artist_to_visit = async (song, artist, visit, term, ranking) => {
     const q = "insert into page_visit_rankings(page_visit_id, song_id, artist_id, term, ranking) values ($1, $2, $3, $4, $5);";
     const res = await query(q, [visit.id, song.id, artist.id, term, ranking]);
+}
+
+const get_page_visit_info = async(page_visit) => {
+    const song_query = "select * from (page_visit_rankings join songs on page_visit_rankings.song_id = songs.id) where page_visit_id = $1;";
+    const songs = await query(song_query, [page_visit.id]);
+    var j = 0;
+    for (song of songs.rows) {
+	const artist_query = "select * from (song_artists join artists on song_artists.artist_id = artists.id) where song_id = $1;";
+	const artists = await query(artist_query, [song.id]);
+	songs.rows[j].artists = artists.rows;
+	j += 1;
+    }
+
+    const artist_query = "select * from (page_visit_rankings join artists on page_visit_rankings.artist_id = artists.id) where page_visit_id = $1;";
+    const artists = await query(artist_query, [page_visit.id]);
+
+    return {
+	songs: songs.rows,
+	artists: artists.rows,
+    };
 }
 
 const get_page_visits_info = async (user) => {
@@ -154,6 +197,7 @@ module.exports = {
     query,
     get_client,
     find_user,
+    find_user_visit,
     find_or_insert_user,
     create_page_visit,
     find_or_insert_artist,
@@ -161,6 +205,8 @@ module.exports = {
     find_or_insert_song,
     add_song_features,
     get_page_visits_info,
+    get_page_visit_info,
     link_song_and_artist_to_visit,
-    set_page_visit_score
+    set_page_visit_score,
+    set_page_visit_hash
 };

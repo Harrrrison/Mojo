@@ -11,8 +11,10 @@ const port = 3000;
 const path = require('path');
 app.use(express.static(path.join(__dirname, 'StaticFiles')));
 
-// not yet used - still messing around
 const db = require('./db/index.js');
+const stats = require("./get_stats.js");
+// init stats
+stats.init();
 
 const client_id = process.env.SPOTIFY_CLIENT_ID;
 const client_secret = process.env.SPOTIFY_CLIENT_SECRET;
@@ -69,21 +71,17 @@ async function store_page_visit_songs_and_artists_and_get_score(auth_code, page_
 	    const song_id = song.uri.slice(14);
 	    songs_need_features_ids.push(song_id);
 	    songs_need_features.push(song_.song);
-	    song_ = song_.song;
-	} else {
-	    song_ = song_.song;
 	}
+	
 	for (const artist of song.artists) {
-	    const _ = db.find_or_insert_artist(artist.name,
-					       artist.uri,
-					       artist.external_urls.spotify)
-		  .then((_artist) => {
-		      db.link_artist_to_song(_artist, song_);
-		  });
+	    const _artist = await db.find_or_insert_artist(artist.name,
+						     artist.uri,
+						     artist.external_urls.spotify);
+	    db.link_artist_to_song(_artist, song_.song).then(() => {});
 	}
 	total_score += 1.0 - (+song.popularity / 100.0);
 	count += 1;
-	const ignore = await db.link_song_and_artist_to_visit(song_, artist__,
+	const ignore = await db.link_song_and_artist_to_visit(song_.song, artist__,
 							      page_visit, term, count);
     }
     if (songs_need_features.length > 0) {
@@ -110,6 +108,7 @@ async function create_page_visit(auth_code, user) {
     score += await store_page_visit_songs_and_artists_and_get_score(auth_code, page_visit, "medium");
     score += await store_page_visit_songs_and_artists_and_get_score(auth_code, page_visit, "long");
     const _ = db.set_page_visit_score(page_visit, score);
+    return db.set_page_visit_hash(page_visit);
 }
 
 async function get_and_store_user_data(auth_code) {
@@ -128,9 +127,9 @@ async function get_and_store_user_data(auth_code) {
 
     const user = await db.find_or_insert_user(body.display_name, body.uri);
 
-    await create_page_visit(auth_code, user);
+    const visit = await create_page_visit(auth_code, user);
     
-    return user;
+    return {user: user, visit: visit};
 }
 
 // Callback service parsing the authorization token and asking for the access token
@@ -154,9 +153,12 @@ app.get('/callback', async (req, res) => {
 	    if (response.status !== 200) {
 		return;
 	    }
-	    const user = await get_and_store_user_data(response.data.access_token);
+	    const data = await get_and_store_user_data(response.data.access_token);
+	    const user = data.user;
+	    const visit = data.visit;
+	    const visit_id = visit.hash;
 	    var uri = `http://localhost:${port}/stats`;
-	    res.redirect(uri + '?user_id=' + user.uid);
+	    res.redirect(uri + '?user_id=' + user.uid + "&visit_id=" + visit_id);
 	});
 });
 
@@ -252,12 +254,13 @@ app.get("/stats", async (req, res) => {
     res.set("Content-Type", "text/html");
     
     const user_id = req.query.user_id;
-    if (!user_id) {
+    const visit_id = req.query.visit_id;
+    if (!user_id || !visit_id) {
 	const html = `
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>MOJO | Missing User ID</title>
+    <title>MOJO | Bad URL</title>
   </head>
   <body>
     <h1>ERROR</h1>
@@ -268,8 +271,8 @@ app.get("/stats", async (req, res) => {
 	res.send(Buffer.from(html));
 	return;
     }
-    const user = await db.find_user(user_id);
-    if (!user) {
+    const user_visit_info = await db.find_user_visit(user_id, visit_id);
+    if (!user_visit_info) {
 	const html = `
 <!DOCTYPE html>
 <html lang="en">
@@ -285,129 +288,66 @@ app.get("/stats", async (req, res) => {
 	res.send(Buffer.from(html));
 	return;
     }
-    const data = await db.get_page_visits_info(user);
-    const recent_visit = data[data.length - 1];
 
-    const recent_songs = build_top_songs_component(recent_visit, "short");
-    const medium_term_songs = build_top_songs_component(recent_visit, "medium");
-    const long_term_songs = build_top_songs_component(recent_visit, "long");
+    const visit = await db.get_page_visit_info(user_visit_info);
 
-    //    console.log(recent_visit.songs[0]);
 
-    var charts_js = "";
-    var charts_html = `<div style="height:500px; display: grid; grid-template-columns: 500px 500px 500px;">`;
+    // i just picked 6
+    // missing speechiness and liveness
+    const attrs = [
+	"danceability", "energy", "acousticness",
+	"instrumentalness", "valence", "tempo"
+    ];
+
+    var labeled_stats_data = [];
+    
+    var stats_data = []
     for (range of ["short", "medium", "long"]) {
-	const attrs = [
-	    "danceability", "energy", "speechiness", "acousticness", "instrumentalness",
-	    "liveness", "valence", "tempo"
-	];
 	var datas = [];
-	const some_songs = recent_visit.songs.filter((s) => { return s.term === "short"; });
+	var labeled_datas = {};
+	const some_songs = visit.songs.filter((s) => { return s.term === range; });
 	for (attr of attrs) {
 	    var d = get_quant_stats_for_property(some_songs, attr);
 	    if (attr === "tempo") {
 		d.mean /= 300.0; // NOTE: some arbitrary high bpm
 	    }
 	    datas.push(d);
-
+	    labeled_datas[attr] = d;
 	}
-	charts_html += `<canvas id="stats-chart-${range}"></canvas>`;
-	charts_js += `
-const stats_${range} = document.getElementById("stats-chart-${range}");
-stats_${range}.style.width = "250px !important";
-stats_${range}.style.height = "250px !important";
-Chart.defaults.color = '#ffffff';
-new Chart(stats_${range}, {
-  type: 'radar',
-  data: {
-    labels: [${attrs.map(attr => "'" + attr + "'").join()}],
-    datasets: [
-      {
-        data: [${datas.map(d => d.mean).join()}],
-        fill: true,
-        borderColor: 'rgb(228, 119, 128)',
-        backgroundColor: 'rgb(228, 119, 128, 0.2)',
-        pointBackgroundColor: 'rgb(228, 119, 128)',
-        pointBorderColor: 'rgb(228, 119, 128)',
-        pointStyle: false,
-      },
-    ],
-  },
-  options: {
-    events: [],
-    plugins: {
-      legend: { display: false },
-      tooltip: { display: false }
-    },
-    scales: {
-      r: {
-        suggestedMin: 0,
-        suggestedMax: 1,
-        ticks: {
-          display: false,
-          maxTicksLimit: 4
-        },
-        angleLines: {
-          color: 'rgb(255, 255, 255, 0.25)',
-//          display: false
-        },
-        grid: {
-          color: 'rgb(255, 255, 255, 0.25)',
-        }
-      },
-    },
-  },
-});
-`;
-
+	stats_data.push(datas);
+	labeled_stats_data.push(labeled_datas);
     }
-    charts_html += "</div>";
 
-    const recent_artists = build_top_artists_component(recent_visit, "short");
-    const medium_term_artists = build_top_artists_component(recent_visit, "medium");
-    const long_term_artists = build_top_artists_component(recent_visit, "long");
+    const mojo = stats.calc_mojo(labeled_stats_data);
+
+    const chart_js = stats.templ.subs_all(stats.chart(), {
+	labels: attrs.map(attr => "'" + attr + "'").join(),
+	datasets: stats_data.map((data, i) => {
+	    return stats.templ.subs_all(stats.dataset(), {
+		label: ["recent listening", "this year", "all time"][i],
+		data: data.map(d => d.mean.toString()).join(),
+		rgb: ["288, 119, 128", "222, 131, 127", "215, 142, 125"][i],
+		opacity: ["1.0", "0.7", "0.4"][i],
+		opacity2: ["0.25", "0.15", "0.05"][i],
+	    });
+	}).join(),
+    });
+
+    const artists = visit.artists;
+    const songs = visit.songs;
+
+    const html = stats.templ.subs_all(stats.stats_page(), {
+	username: user_visit_info.username,
+	short_term_artists: stats.top_n_artists(artists.filter(s => s.term === "short"), 10),
+	medium_term_artists: stats.top_n_artists(artists.filter(s => s.term === "medium"), 10),
+	long_term_artists: stats.top_n_artists(artists.filter(s => s.term === "long"), 10),
+	short_term_songs: stats.top_n_songs(songs.filter(s => s.term === "short"), 10),
+	medium_term_songs: stats.top_n_songs(songs.filter(s => s.term === "medium"), 10),
+	long_term_songs: stats.top_n_songs(songs.filter(s => s.term === "long"), 10),
+	chart_script: chart_js,
+	mojo: mojo,
+    });
     
-    const html = `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="draggable.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.plot.ly/plotly-2.29.1.min.js" charset="utf-8"></script>
-    <link rel="stylesheet" href="temp_style.css">
-    <title>MOJO | ${user.username}</title>
-</head>
-<body class="background">
-    <h1 id="intro">Hello <em>${user.username}</em></h1>
-    ${charts_html}
-    <script>${charts_js}</script>
-    <div id="rest">
-        <div id="card-container">
-            <div id="card-container-col1">
-                <div id="card-mojo"><em>${user.username}'s</em> mojo</div>
-                <div class="draggable-container-box">
-                </div>
-                <div class="draggable-container-box"></div>
-            </div>
-            <div id="card-container-col2">
-                <div class="draggable-container-box">${medium_term_artists}</div>
-                <div class="draggable-container-box">${long_term_artists}</div>
-                <div class="draggable-container-box"></div>
-            </div>
-        </div>
-        <div id="content-container">
-            <div class="draggable-container-box">${medium_term_songs}</div>
-            <div class="draggable-container-box">${recent_songs}</div>
-            <div class="draggable-container-box">${long_term_songs}</div>
-            <div class="draggable-container-box">${recent_artists}</div>
-        </div>
-    </div>
-</body>
-</html>
-`;
-
     res.send(Buffer.from(html));
 });
 
