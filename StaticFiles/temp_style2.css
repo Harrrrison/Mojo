@@ -10,6 +10,11 @@ body {
     padding: 0;
 }
 
+body > div {
+    padding-left: 10%;
+    padding-right: 10%;
+}
+
 div, p, h1, h2, h3 {
     box-sizing: border-box;
 }
@@ -28,8 +33,6 @@ div, p, h1, h2, h3 {
     height: 600px;
     padding-top: 50px;
     padding-bottom: 50px;
-    padding-left: 10%;
-    padding-right: 10%;
     width: 100%;
     display: grid;
     grid-template-columns: 20% 30% auto;
