@@ -69,17 +69,20 @@ function fetchStats(accessToken, url, keyToFind, elementId, type) {
                 }else if(type === 'track'){
 
                     const name = data.items.map(item => item.name);
-                    const genres = data.items.map(item => item.genres);
+                    const genre = findData(data, 'genres');
                     const songPFP = findData(data, 'images');
                     const type= findData(data, 'type');
+                    const song_link = findData(data, 'external_urls');
                     //const artistLink = data.items.map(item => item.external_urls);
                     returnData.forEach((returnData, index) => {
                         const element = document.getElementById(`${elementId}${index + 6}`);
+                        const song_link = data.items.map(item => item.external_urls.spotify);
                         if (element) {
                             element.innerHTML = `
                     <div class="song-info">
                         <p>${index + 1}.</p>
-                        <p>Name: ${name[index]}</p>
+                        <p>Name: <a style="color: #b20f74; text-decoration: none" 
+                        href = ${song_link[index]}>${name[index]}</a></p>
                         <img src="${songPFP[index][2]['url']}" alt="Song profile picture" class ="songImage">
                     </div>`
                         }
