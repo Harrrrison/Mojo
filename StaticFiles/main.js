@@ -133,6 +133,7 @@ vec3 chroma_sample2(vec3 col1, vec3 col2, vec2 pb, float t) {
 
 void main() {
   vec3 pink = vec3(0.894, 0.467, 0.502) * 1.2;
+  //vec3 green = vec3(15.0/255.0, 122.0/255.0, 24.0/255.0);
   vec3 green = vec3(173.4/255.0, 209.1/255.0, 114.75/255.0);
   //vec3 green = vec3(0.68, 0.82, 0.45);
 

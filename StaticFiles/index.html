@@ -77,11 +77,13 @@
 	  border: none;
 	  font-weight: bold;
       }
+      
       button:hover {
 	  font-style: italic;
 	  transition: 0.5s;
 	  transition-timing-function: ease-out;
       }
+      
       button > div {
 	  padding-top: 1px;
 	  width: 0%;
@@ -104,11 +106,26 @@
 	  height: 0.125rem;
 	  transition: width 1s ease-in-out;
       }
+      
+      a {
+	  position: absolute;
+	  top: 1rem;
+	  left: 1rem;
+	  height: 8vh;
+      }
+      
+      img {
+	  height: 100%;
+      }
     </style>
     <p id="error"></p>
     <canvas id="canvas" width="800" height="600"></canvas>
     <div id="main-body">
-      <div id="empty"></div>
+      <div id="empty">
+	<a href="https://spotify.com" target="_blank">
+	  <img src="Spotify_Icon_RGB_White.png">
+	</a>
+      </div>
       <div id="title-line">
 	<h2>Discover <em>your</em> music</h2>
 	<h1 class="title">MOJO</h1>

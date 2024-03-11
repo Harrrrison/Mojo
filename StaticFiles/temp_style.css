@@ -1,0 +1,122 @@
+body {
+    background: rgb(173.4, 209.1, 114.75);
+    font-family: Arial, Helvetica, sans-serif;
+    color: white;
+    display: grid;
+    grid-template-rows: 15% 85%;
+    box-sizing: border-box;
+    height: 90vh;
+}
+
+#intro {
+    font-size: 4rem;
+    font-weight: normal;
+}
+
+#intro > em {
+    font-weight: bold;
+    color: rgb(228, 119, 128);
+}
+
+#rest {
+    height: 100%;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 25% 70%;
+    column-gap: 5%;
+}
+
+#card-container {
+    border: 1px solid white;
+    border-radius: 1rem;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 50% 50%;
+}
+
+#card-container-col1 {
+    height: 100%;
+    width: 100%;
+    display: grid;
+    grid-template-rows: 20% 40% 40%;
+}
+
+#card-container-col2 {
+    height: 100%;
+    width: 100%;
+    display: grid;
+    grid-template-rows: 33% 33% 34%;
+}
+
+#card-mojo {
+    text-align: center;
+}
+
+#card-mojo > em {
+    font-weight: bold;
+    font-style: normal;
+    color: rgb(228, 119, 128);
+}
+
+#content-container {
+    display: grid;
+    width: 100%;
+    grid-template-columns: 25% 25% 25% 25%;
+}
+
+.song-item {
+    padding-bottom: 0.2rem;
+/*    margin: 1rem 1rem; */
+    transition: 0.5s;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.song-item > p {
+    padding-left: 0.5rem;
+    text-align: right;
+    margin: 0;
+}
+
+.song-item > div {
+    padding-left: 0.5rem;
+    width: 100%;
+}
+
+.song-item > div > * {
+    user-select: none;
+    font-size: 0.8rem;
+    margin: 0;
+}
+.song-item > div > p {
+    font-size: 0.7rem;
+    font-weight: light;
+}
+
+.draggable-container-box {
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    border: 1px solid white;
+    border-radius: 1rem;
+/*    padding: 1rem 1rem; */
+}
+
+.song-item > a > img {
+    width: 4rem;
+}
+
+.songs-list {
+    width: 100%;
+    height: 100%;
+    border-radius: 1rem;
+    overflow: hidden;
+}
+
+.focused {
+    background: black;
+    transition: 0.5s;
+}

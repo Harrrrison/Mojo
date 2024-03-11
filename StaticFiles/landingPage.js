@@ -69,7 +69,7 @@ function fetchStats(accessToken, url, keyToFind, elementId, type) {
                 }else if(type === 'track'){
 
                     const name = data.items.map(item => item.name);
-                    const genre = findData(data, 'genres');
+                    const genres = data.items.map(item => item.genres);
                     const songPFP = findData(data, 'images');
                     const type= findData(data, 'type');
                     //const artistLink = data.items.map(item => item.external_urls);
@@ -80,8 +80,6 @@ function fetchStats(accessToken, url, keyToFind, elementId, type) {
                     <div class="song-info">
                         <p>${index + 1}.</p>
                         <p>Name: ${name[index]}</p>
-                        
-
                         <img src="${songPFP[index][2]['url']}" alt="Song profile picture" class ="songImage">
                     </div>`
                         }

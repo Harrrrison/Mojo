@@ -5,13 +5,12 @@ class
 body, html {
     display: flex;
     justify-content: center;
-    background: #a8e495;
+    background: rgb(173.4, 209.1, 114.75);
 }
 
 
 .background {
-    background-color: #a8e495;
-
+    background-color: rgb(173.4, 209.1, 114.75);
 }
 .flex-container {
     display: flex;
@@ -155,6 +154,11 @@ button {
     position: relative;
     display: grid;
     grid-template-columns: 1fr 1fr;
+/*
+    animation: fade-in ease 3s;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+ */
 }
 
 .item-container:link{
@@ -310,6 +314,18 @@ button {
         font-size: 1.4em;
     }
 }
+
+@keyframes fade-in {
+    0%{
+        opacity: 0;
+    }
+
+    100%{
+        opacity: 1;
+    }
+}
+
+/* Styles for the waves */
 
 
 

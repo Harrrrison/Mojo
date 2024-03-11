@@ -135,6 +135,58 @@ if (accessToken) {
 	.catch(error => console.error(error));
 
 
+// Track features
+let acoustic = 0.0;
+let dance = 0.0;
+let energy = 0.0;
+let instrument = 0.0;
+let speech = 0.0;
+let valence = 0.0;
+let liveness = 0.0;
+fetch('https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=10', {
+    headers: { 'Authorization': 'Bearer ' + accessToken }
+})
+.then(response => response.json())
+.then(data => {
+    try {
+        let trackIDForFeatures = data.items.slice(0, 10).map(track => track.id); 
+        const fetchPromises = trackIDForFeatures.map(trackID => {
+            return fetch('https://api.spotify.com/v1/audio-features/' + trackID, {
+                headers: { 'Authorization': 'Bearer ' + accessToken }
+            })
+            .then(response => response.json())
+            .then(data => {
+                acoustic += data.acousticness;
+                dance += data.danceability;
+                energy += data.energy;
+                instrument += data.instrumentalness;
+                speech += data.speechiness;
+                valence += data.valence;
+                liveness += data.liveness;
+            })
+            .catch(error => console.error(error));
+        });
+
+        // Wait for all fetch requests to complete
+        Promise.all(fetchPromises)
+        .then(() => {
+            // Output the final sums as percentages with two decimal places
+            console.log("Acoustic:", ((acoustic / 10) * 100).toFixed(2));
+            console.log("Danceability:", ((dance / 10) * 100).toFixed(2));
+            console.log("Energy:", ((energy / 10) * 100).toFixed(2));
+            console.log("Instrumentalness:", ((instrument / 10) * 100).toFixed(2));
+            console.log("Speechiness:", ((speech / 10) * 100).toFixed(2));
+            console.log("Valence:", ((valence / 10) * 100).toFixed(2));
+            console.log("Liveness:", ((liveness / 10) * 100).toFixed(2));
+            })
+        .catch(error => console.error(error));
+    } catch (e) {
+        console.error("Parsing error:", e);
+    }
+})
+.catch(error => console.error(error));
+
+
     // Popularity score of top songs turned into uniqueness score
     fetch('https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=10', {
 	headers: { 'Authorization': 'Bearer ' + accessToken }

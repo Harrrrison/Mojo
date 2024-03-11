@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="draggable.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.29.1.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="temp_style.css">
+    <title>MOJO | <%username%></title>
+  </head>
+  <body class="background">
+    <h1 id="intro">Hello <em><%username%></em></h1>
+    <%charts%>
+    <div id="rest">
+      <div id="card-container">
+        <div id="card-container-col1">
+          <div id="card-mojo"><em><%username%>'s</em> mojo</div>
+          <div class="draggable-container-box">
+          </div>
+          <div class="draggable-container-box"></div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
