@@ -24,6 +24,7 @@ const redirect_uri = process.env.REDIRECT_URI;
 app.get('/login', function(req, res) {
 //    console.log('working');
 //    console.log(process.env.SPOTIFY_CLIENT_ID);
+	// this isnt sendint the user to the login page ??
     var scopes = 'user-read-private user-read-email user-top-read';
     res.redirect('https://accounts.spotify.com/authorize' +
 		 '?response_type=code' +
