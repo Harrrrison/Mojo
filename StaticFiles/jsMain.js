@@ -134,6 +134,7 @@ headers: { 'Authorization': 'Bearer ' + accessToken }
 })
 .catch(error => console.error(error));
 
+function dragElement(elmnt) {
 
 // Track features
 let acoustic = 0.0;
@@ -149,7 +150,7 @@ fetch('https://api.spotify.com/v1/me/top/tracks?time_range=long_term&limit=10', 
 .then(response => response.json())
 .then(data => {
     try {
-        let trackIDForFeatures = data.items.slice(0, 10).map(track => track.id); 
+        let trackIDForFeatures = data.items.slice(0, 10).map(track => track.id);
         const fetchPromises = trackIDForFeatures.map(trackID => {
             return fetch('https://api.spotify.com/v1/audio-features/' + trackID, {
                 headers: { 'Authorization': 'Bearer ' + accessToken }
@@ -208,13 +209,30 @@ headers: { 'Authorization': 'Bearer ' + accessToken }
     fetchStats(accessToken, 'https://api.spotify.com/v1/audio-analysis/11dFghVXANMlKmJXsNCbNl',
         'start', 'testBox');// this is a test to see if the function works
 
+function elementDrag(e) {
+    e = e || window.event;
+    e.preventDefault();
 
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+
+    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+}
+
+function closeDragElement() {
+    document.onmouseup = null;
+    document.onmousemove = null;
+
+}
 }
 
 //interactjs.io
 
 //import interact from 'interactjsj';
-//
+
 
 const position = { x: 0, y: 0 };
 
