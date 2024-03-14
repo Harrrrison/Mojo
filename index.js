@@ -158,7 +158,7 @@ app.get('/callback', async (req, res) => {
 	    const user = data.user;
 	    const visit = data.visit;
 	    const visit_id = visit.hash;
-	    var uri = `http://localhost:${port}/landingPage.html`;
+	    var uri = `http://localhost:${port}/stats`;
 	    res.redirect(uri + '?user_id=' + user.uid + "&visit_id=" + visit_id);
 	});
 });
