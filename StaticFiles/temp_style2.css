@@ -127,3 +127,17 @@ div, p, h1, h2, h3 {
     width: 100%;
     background: rgb(228, 119, 128);
 }
+
+#content-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.draggable-container-box {
+    border: 2px solid white;
+}
+
+
+
+
