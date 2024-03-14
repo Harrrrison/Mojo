@@ -198,7 +198,6 @@ if (accessToken) {
                     const sum = popularity.reduce((a, b) => a + b, 0); // Sums up the popularity of each top song
                     const uniquenessScore = 100 - Math.ceil(sum / popularity.length); // Gives an average of popularity and then inverts it to get uniqueness score
                     document.getElementById('popularity').innerHTML = `<p>Uniqueness: ${uniquenessScore}%</p>`;
-                    console.log(uniquenessScore)
                 } catch (e) {
                     console.error("Parsing error:", e);
                     document.getElementById('popularity').innerHTML = "Error parsing JSON data.";
