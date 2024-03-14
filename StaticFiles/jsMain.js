@@ -79,7 +79,7 @@ function fetchStats(accessToken, url, keyToFind, elementId, multiple = false) {
 if (accessToken) {
     // Use the access token to make API requests
     fetch('https://api.spotify.com/v1/me', {
-        headers: { 'Authorization': 'Bearer ' + accessToken }
+        headers: {'Authorization': 'Bearer ' + accessToken}
     })
         .then(response => response.json())
         .then(data => {
@@ -87,7 +87,7 @@ if (accessToken) {
                 const username = findData(data, 'display_name'); // Extract names
                 // Convert names array to a string for display, e.g., as a list
                 // Added <span> tag to change color of the text
-                const output = username.map(username => `<p> <span style="color: black;">Hello</span> ${username}.</p>`).join('');
+                const output = username.map(username => `<p> <span style="color: black;">Hello</span> <span class="username">${username}</span>.</p>`).join('');
                 document.getElementById('data').innerHTML = `<p>${output}</p>`;
             } catch (e) {
                 console.error("Parsing error:", e);
@@ -99,131 +99,148 @@ if (accessToken) {
     // this block can be reused for all other stats, look at the link above for the params needed in the url
 
     // Top Artists
-    fetch('https://api.spotify.com/v1/me/top/artists?limit=10&time_range=short_term', {
-	headers: { 'Authorization': 'Bearer ' + accessToken }
+    fetch('https://api.spotify.com/v1/me/top/artists?limit=10&time_range=long_term', {
+        headers: {'Authorization': 'Bearer ' + accessToken}
     })
-	.then(response => response.json())
-	.then(data => {
+        .then(response => response.json())
+        .then(data => {
             try {
-		const names = findData(data, 'name'); // Extract names
-		// Convert names array to a string for display, e.g., as a list
-		const namesList = names.map(name => `<li>${name}</li>`).join('');
-		document.getElementById('topArtists').innerHTML = `<h3>Top Artists</h3><ol start="1">${namesList}</ol>`;
+                const names = findData(data, 'name'); // Extract names
+                // Convert names array to a string for display, e.g., as a list
+                const namesList = names.map(name => `<li>${name}</li>`).join('');
+                document.getElementById('topArtists').innerHTML = `<h3>Top Artists</h3><ol start="1">${namesList}</ol>`;
             } catch (e) {
-		console.error("Parsing error:", e);
-		document.getElementById('topArtists').innerHTML = "Error parsing JSON data.";
+                console.error("Parsing error:", e);
+                document.getElementById('topArtists').innerHTML = "Error parsing JSON data.";
             }
-	})
-	.catch(error => console.error(error));
+        })
+        .catch(error => console.error(error));
 
     // Top Songs
-    fetch('https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=10', {
-	headers: { 'Authorization': 'Bearer ' + accessToken }
+    fetch('https://api.spotify.com/v1/me/top/tracks?time_range=long_term&limit=10', {
+        headers: {'Authorization': 'Bearer ' + accessToken}
     })
-	.then(response => response.json())
-	.then(data => {
-	    try {
-		const songNames = data.items.slice(0, 10).map(song => song.name); // Extract song names. Used this as there are multiple names held. May need to be changed if we vary the number of songs we display
-		// Convert songNames array to a string for display, e.g., as a list
-		const namesList = songNames.map(name => `<li>${name}</li>`).join('');
-		document.getElementById('topSongs').innerHTML = `<h3>Top Songs</h3><ol start="1">${namesList}</ol>`;
-	    } catch (e) {
-		console.error("Parsing error:", e);
-		document.getElementById('topSongs').innerHTML = "Error parsing JSON data.";
-	    }
-	})
-	.catch(error => console.error(error));
-
-
-// Track features
-let acoustic = 0.0;
-let dance = 0.0;
-let energy = 0.0;
-let instrument = 0.0;
-let speech = 0.0;
-let valence = 0.0;
-let liveness = 0.0;
-fetch('https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=10', {
-    headers: { 'Authorization': 'Bearer ' + accessToken }
-})
-.then(response => response.json())
-.then(data => {
-    try {
-        let trackIDForFeatures = data.items.slice(0, 10).map(track => track.id); 
-        const fetchPromises = trackIDForFeatures.map(trackID => {
-            return fetch('https://api.spotify.com/v1/audio-features/' + trackID, {
-                headers: { 'Authorization': 'Bearer ' + accessToken }
-            })
-            .then(response => response.json())
-            .then(data => {
-                acoustic += data.acousticness;
-                dance += data.danceability;
-                energy += data.energy;
-                instrument += data.instrumentalness;
-                speech += data.speechiness;
-                valence += data.valence;
-                liveness += data.liveness;
-            })
-            .catch(error => console.error(error));
-        });
-
-        // Wait for all fetch requests to complete
-        Promise.all(fetchPromises)
-        .then(() => {
-            // Output the final sums as percentages with two decimal places
-            console.log("Acoustic:", ((acoustic / 10) * 100).toFixed(2));
-            console.log("Danceability:", ((dance / 10) * 100).toFixed(2));
-            console.log("Energy:", ((energy / 10) * 100).toFixed(2));
-            console.log("Instrumentalness:", ((instrument / 10) * 100).toFixed(2));
-            console.log("Speechiness:", ((speech / 10) * 100).toFixed(2));
-            console.log("Valence:", ((valence / 10) * 100).toFixed(2));
-            console.log("Liveness:", ((liveness / 10) * 100).toFixed(2));
-            })
+        .then(response => response.json())
+        .then(data => {
+            try {
+                const songNames = data.items.slice(0, 10).map(song => song.name); // Extract song names. Used this as there are multiple names held. May need to be changed if we vary the number of songs we display
+                // Convert songNames array to a string for display, e.g., as a list
+                const namesList = songNames.map(name => `<li>${name}</li>`).join('');
+                document.getElementById('topSongs').innerHTML = `<h3>Top Songs</h3><ol start="1">${namesList}</ol>`;
+            } catch (e) {
+                console.error("Parsing error:", e);
+                document.getElementById('topSongs').innerHTML = "Error parsing JSON data.";
+            }
+        })
         .catch(error => console.error(error));
-    } catch (e) {
-        console.error("Parsing error:", e);
-    }
-})
-.catch(error => console.error(error));
+
+
+    // Track features
+    let acoustic = 0.0;
+    let dance = 0.0;
+    let energy = 0.0;
+    let instrument = 0.0;
+    let speech = 0.0;
+    let valence = 0.0;
+    let liveness = 0.0;
+    fetch('https://api.spotify.com/v1/me/top/tracks?time_range=long_term&limit=10', {
+        headers: {'Authorization': 'Bearer ' + accessToken}
+    })
+        .then(response => response.json())
+        .then(data => {
+            try {
+                let trackIDForFeatures = data.items.slice(0, 10).map(track => track.id);
+                const fetchPromises = trackIDForFeatures.map(trackID => {
+                    return fetch('https://api.spotify.com/v1/audio-features/' + trackID, {
+                        headers: {'Authorization': 'Bearer ' + accessToken}
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            acoustic += data.acousticness;
+                            dance += data.danceability;
+                            energy += data.energy;
+                            instrument += data.instrumentalness;
+                            speech += data.speechiness;
+                            valence += data.valence;
+                            liveness += data.liveness;
+                        })
+                        .catch(error => console.error(error));
+                });
+
+                // Wait for all fetch requests to complete
+                Promise.all(fetchPromises)
+                    .then(() => {
+                        // Output the final sums as percentages with two decimal places
+                        console.log("Acoustic:", ((acoustic / 10) * 100).toFixed(2));
+                        console.log("Danceability:", ((dance / 10) * 100).toFixed(2));
+                        console.log("Energy:", ((energy / 10) * 100).toFixed(2));
+                        console.log("Instrumentalness:", ((instrument / 10) * 100).toFixed(2));
+                        console.log("Speechiness:", ((speech / 10) * 100).toFixed(2));
+                        console.log("Valence:", ((valence / 10) * 100).toFixed(2));
+                        console.log("Liveness:", ((liveness / 10) * 100).toFixed(2));
+                    })
+                    .catch(error => console.error(error));
+            } catch (e) {
+                console.error("Parsing error:", e);
+            }
+        })
+        .catch(error => console.error(error));
 
 
     // Popularity score of top songs turned into uniqueness score
-    fetch('https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=10', {
-	headers: { 'Authorization': 'Bearer ' + accessToken }
+    fetch('https://api.spotify.com/v1/me/top/tracks?time_range=long_term&limit=10', {
+        headers: {'Authorization': 'Bearer ' + accessToken}
     })
-	.then(response => response.json())
-	.then(data => {
-	    try {
-		const popularity = findData(data, 'popularity'); // Extract popularity of each top song
-		const sum = popularity.reduce((a, b) => a + b, 0); // Sums up the popularity of each top song
-		const uniquenessScore = 100 - Math.ceil(sum / popularity.length); // Gives an average of popularity and then inverts it to get uniqueness score
-		document.getElementById('popularity').innerHTML = `<p>Uniqueness: ${uniquenessScore}%</p>`;
-	    } catch (e) {
-		console.error("Parsing error:", e);
-		document.getElementById('popularity').innerHTML = "Error parsing JSON data.";
-	    }
-	})
-	.catch(error => console.error(error));
+        .then(response => response.json())
+        .then(data => {
+            try {
+                const popularity = findData(data, 'popularity'); // Extract popularity of each top song
+                const sum = popularity.reduce((a, b) => a + b, 0); // Sums up the popularity of each top song
+                const uniquenessScore = 100 - Math.ceil(sum / popularity.length); // Gives an average of popularity and then inverts it to get uniqueness score
+                document.getElementById('popularity').innerHTML = `<p>Uniqueness: ${uniquenessScore}%</p>`;
+            } catch (e) {
+                console.error("Parsing error:", e);
+                document.getElementById('popularity').innerHTML = "Error parsing JSON data.";
+            }
+        })
+        .catch(error => console.error(error));
 
     fetchStats(accessToken, 'https://api.spotify.com/v1/audio-analysis/11dFghVXANMlKmJXsNCbNl',
                'start', 'testBox');// this is a test to see if the function works
 
+    function elementDrag(e) {
+        e = e || window.event;
+        e.preventDefault();
 
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+
+        elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+        elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+    }
+
+    function closeDragElement() {
+        document.onmouseup = null;
+        document.onmousemove = null;
+
+    }
 }
 
 //interactjs.io
 
 //import interact from 'interactjsj';
-//
 
-const position = { x: 0, y: 0 };
+
+const position = {x: 0, y: 0};
 
 interact('.resize-drag').draggable({
     modifiers: [
         interact.modifiers.snap({
-            targets: [interact.snappers.grid({ x: 20, y: 20 })],
+            targets: [interact.snappers.grid({x: 20, y: 20})],
             range: Infinity,
-            relativePoints: [{ x: 0, y: 0 }]
+            relativePoints: [{x: 0, y: 0}]
         })
     ],
     listeners: {
@@ -242,14 +259,14 @@ interact('.resize-drag').draggable({
     }
 })
     .resizable({
-        edges: { top: true, left: true, bottom: true, right: true },
+        edges: {top: true, left: true, bottom: true, right: true},
         listeners: {
             start(event) {
                 console.log('resize started', event);
             },
 
             move: function (event) {
-                let { x, y } = event.target.dataset
+                let {x, y} = event.target.dataset
 
                 x = (parseFloat(x) || 0) + event.deltaRect.left
                 y = (parseFloat(y) || 0) + event.deltaRect.top
@@ -261,9 +278,42 @@ interact('.resize-drag').draggable({
                     //transform: `translate(${x}px, ${y}px)` // This line is causing the issue
                 })
 
-                Object.assign(event.target.dataset, { x, y })
+                Object.assign(event.target.dataset, {x, y})
 
                 console.log(`Resized to: ${x}px, ${y}px`);
             }
         }
     })
+
+
+// another way to resize and drag divs
+
+const elem = document.querySelector(".box");
+
+// elem.addEventListener('mousedown', mousedown);
+
+function mousedown(e) {
+    window.addEventListener('mousemove', mousemove);
+    window.addEventListener('mouseup', mouseup);
+
+    let prevX = e.clientX;
+    let prevY = e.clientY;
+
+    function mousemove(e) {
+        let newX = prevX - e.clientX;
+        let newY = prevY - e.clientY;
+
+        const rect = elem.getBoundingClientRect();
+
+        elem.style.left = rect.left - newX + "px";
+        elem.style.top = rect.top - newY + "px";
+
+        prevX = e.clientX;
+        prevY = e.clientY;
+    }
+
+    function mouseup() {
+        window.removeEventListener('mousemove', mousemove);
+        window.removeEventListener('mouseup', mouseup)
+    }
+}

@@ -3,30 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mojo</title>
     <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
     <script src="jsMain.js"></script>
     <link rel="stylesheet" href="styleSheet.css">
     <title>Stats Page</title>
 </head>
 <body class="background">
-    <div id="data">Hello Username</div>
 
-  
+    <div class="stats-container">
+        <div id="data" class="username"></div>
+
+        <div class="main-area">
+            <div class="item box-1">
+                <div id="topArtists"></div>
+            </div>
+
+            <div class="item box-2">
+                <div id="topSongs"></div>
+            </div>
+
+            <div class="item box-3">
+                <div id="popularity"></div>
+            </div>
+
+        </div>
+    </div>
 
 <!-- <div class ="resize-drag">
-    <div>Top Artists</div>
     <div id="TopArtistDraggableBoxHeader"></div>
     <div id="topArtists"></div>
-    <div id="topSongs"></div>
-    <div id="popularity"></div>
-</div>
-<div class = "resize-drag">
-
-<div id = "testBox"></div>
-
 </div> -->
-
-<!--We need to contain all the boxes in a div and use the .png-->
 
 </body>
 </html>

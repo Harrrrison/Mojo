@@ -12,9 +12,19 @@
 </head>
 <body>
 <div>
-    <button type="button" onclick="location.href='/to_main'">Configure your stats layout</button>
+    <script src="landingPage.js"></script>
+    <script>
+        function goToStatsPage() {
+            const userAccessToken = encodeURI(accessToken);
+            const url = "/statsPage.html?access_token=" + userAccessToken;
+            window.location.href = url;
+        }
+    </script>
+    <button type="button" onclick="goToStatsPage()">Configure your stats layout</button>
 </div>
+
 <div id = "overview-bounds-box">
+    <h1 style="justify-content: center;">Top Artists</h1>
     <div id = "item-container1" class="item-container-landing">
         <!-- Need: position, Artist name, monthly listeners, genre, artist PFP -->
     </div>
@@ -30,7 +40,8 @@
 </div>
 
 <div id = "top-songs-box">
-<div id = "item-container6" class="item-container-landing">
+    <h1>Top Songs</h1>
+    <div id = "item-container6" class="item-container-landing">
     </div>
     <div id = "item-container7" class ="item-container-landing">
     </div>
