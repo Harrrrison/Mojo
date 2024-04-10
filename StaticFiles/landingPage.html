@@ -16,7 +16,11 @@
     <script>
         function goToStatsPage() {
             const userAccessToken = encodeURI(accessToken);
-            const url = "/statsPage.html?access_token=" + userAccessToken;
+	    const params = new URLSearchParams(window.location.search);
+            //const url = "/statsPage.html?access_token=" + userAccessToken;
+	    const user_id = params.get("user_id");
+	    const visit_id = params.get("visit_id");
+	    var url = "/stats?user_id="+user_id+"&visit_id="+visit_id;
             window.location.href = url;
         }
     </script>

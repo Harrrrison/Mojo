@@ -159,7 +159,7 @@ app.get('/callback', async (req, res) => {
 	    const visit = data.visit;
 	    const visit_id = visit.hash;
 	    var uri = `http://localhost:${port}/landingPage.html`; // redirect to the landing page
-            res.redirect(uri + '?access_token=' + response.data.access_token);
+            res.redirect(uri + '?access_token=' + response.data.access_token + '&user_id=' + user.uid + "&visit_id=" + visit_id);
 	    /*
 	    var uri = `http://localhost:${port}/stats`;
 	    res.redirect(uri + '?user_id=' + user.uid + "&visit_id=" + visit_id);
