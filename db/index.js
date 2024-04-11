@@ -32,8 +32,8 @@ const find_user_visit = async (uid, visit_id) => {
 	console.error("invalid uid: " + uid);
 	return null;
     }
-    const search_query = "select * from page_visits join users on page_visits.user_id = users.id where users.uid = $1 and page_visits.hash = $2;";
-    const res = await query(search_query, [uid, visit_id]);
+    const search_query = "select * from page_visits where page_visits.hash = $1 and $2 = (select uid from users where users.id = page_visits.user_id);";
+    const res = await query(search_query, [visit_id, uid]);
     if (res.rowCount > 0) {
 	return res.rows[0];
     }
@@ -159,9 +159,13 @@ const get_page_visit_info = async(page_visit) => {
     const artist_query = "select * from (page_visit_rankings join artists on page_visit_rankings.artist_id = artists.id) where page_visit_id = $1;";
     const artists = await query(artist_query, [page_visit.id]);
 
+    const user_query = "select * from users where users.id = $1;";
+    const users = await query(user_query, [page_visit.user_id]);
+    
     return {
 	songs: songs.rows,
 	artists: artists.rows,
+	user: users.rows[0]
     };
 }
 

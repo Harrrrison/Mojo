@@ -108,7 +108,7 @@ async function create_page_visit(auth_code, user) {
     score += await store_page_visit_songs_and_artists_and_get_score(auth_code, page_visit, "short");
     score += await store_page_visit_songs_and_artists_and_get_score(auth_code, page_visit, "medium");
     score += await store_page_visit_songs_and_artists_and_get_score(auth_code, page_visit, "long");
-    const _ = db.set_page_visit_score(page_visit, score);
+    const _ = db.set_page_visit_score(page_visit, score/3);
     return db.set_page_visit_hash(page_visit);
 }
 
@@ -158,12 +158,10 @@ app.get('/callback', async (req, res) => {
 	    const user = data.user;
 	    const visit = data.visit;
 	    const visit_id = visit.hash;
-	    var uri = `http://localhost:${port}/landingPage.html`; // redirect to the landing page
-            res.redirect(uri + '?access_token=' + response.data.access_token + '&user_id=' + user.uid + "&visit_id=" + visit_id);
-	    /*
+//	    var uri = `http://localhost:${port}/landingPage.html`; // redirect to the landing page
+//            res.redirect(uri + '?access_token=' + response.data.access_token + '&user_id=' + user.uid + "&visit_id=" + visit_id);
 	    var uri = `http://localhost:${port}/stats`;
 	    res.redirect(uri + '?user_id=' + user.uid + "&visit_id=" + visit_id);
-	    */
 	});
 });
 
@@ -323,7 +321,7 @@ app.get("/stats", async (req, res) => {
 	labeled_stats_data.push(labeled_datas);
     }
 
-    const mojo = stats.calc_mojo(labeled_stats_data);
+    const mojo = stats.calc_mojo(labeled_stats_data, user_visit_info.score);
 
     const chart_js = stats.templ.subs_all(stats.chart(), {
 	labels: attrs.map(attr => "'" + attr + "'").join(),
@@ -340,9 +338,9 @@ app.get("/stats", async (req, res) => {
 
     const artists = visit.artists;
     const songs = visit.songs;
-
+    
     const html = stats.templ.subs_all(stats.stats_page(), {
-	username: user_visit_info.username,
+	username: visit.user.username,
 	short_term_artists: stats.top_n_artists(artists.filter(s => s.term === "short"), 10),
 	medium_term_artists: stats.top_n_artists(artists.filter(s => s.term === "medium"), 10),
 	long_term_artists: stats.top_n_artists(artists.filter(s => s.term === "long"), 10),
